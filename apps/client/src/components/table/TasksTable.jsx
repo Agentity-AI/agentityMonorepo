@@ -26,13 +26,13 @@ function SimulationTable({ items = [] }) {
               Status
             </th>
             <th className="border border-gray-700 px-3 py-2 text-left">
-              SOL Amount
+              HBAR Amount
             </th>
             <th className="border border-gray-700 px-3 py-2 text-left">
               Payment Status
             </th>
             <th className="border border-gray-700 px-3 py-2 text-left">
-              Solana Signature
+              Hedera Transaction
             </th>
             <th className="border border-gray-700 px-3 py-2 text-left">
               Created At
@@ -61,13 +61,13 @@ function SimulationTable({ items = [] }) {
                   {item.status ?? "—"}
                 </td>
                 <td className="border border-gray-700 px-3 py-2">
-                  {payment.amount ?? payment.amountSol ?? "—"}
+                  {payment.amount ?? "—"}
                 </td>
                 <td className="border border-gray-700 px-3 py-2 capitalize">
                   {payment.status ?? "—"}
                 </td>
                 <td className="border border-gray-700 px-3 py-2">
-                  {payment.solanaSignature ?? "—"}
+                  {payment.hederaTransactionId ?? "—"}
                 </td>
                <td className="border border-gray-700 px-3 py-2">
                   <button onClick={() => executeTask(item.id)}>execute</button>

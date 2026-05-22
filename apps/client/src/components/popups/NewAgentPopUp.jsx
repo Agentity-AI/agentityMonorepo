@@ -9,7 +9,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
     getAgentTypes,
     getSystemStatus,
     agentTypes,
-    solanaStatus,
+    hederaStatus,
     loading,
   } = authentication();
 
@@ -21,7 +21,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
     apiEndpoint: "",
     metadata: {
       strategy: "",
-      network: "solana-devnet"
+      network: "testnet"
     },
   });
 
@@ -72,9 +72,9 @@ function NewAgentPopUp({ onClose, onSubmit }) {
 
     await linkWalletToAgent({
       agentId: agent.id,
-      solanaAddress: payload.publicKey,
-      solanaPublicKey: payload.publicKey,
-      network: payload.metadata.network.replace("solana-", ""),
+      hederaAccountId: payload.publicKey,
+      hederaPublicKey: payload.publicKey,
+      network: payload.metadata.network,
     });
 
     onClose?.(true);
@@ -88,7 +88,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
         <div>
           <h2 className="text-lg font-semibold text-white">Register New Agent</h2>
           <p className="text-xs text-gray-400">
-            Define capabilities and Solana metadata for your agent.
+            Define capabilities and Hedera metadata for your agent.
           </p>
         </div>
         <button
@@ -171,7 +171,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
               <input
                 type="text"
                 className="input px-2 input-bordered w-full border-white/10 bg-black/40 text-xs font-mono text-gray-100 placeholder:text-gray-500 focus:border-indigo-500 focus:outline-none"
-                placeholder="8uQhQMGm4qMVM9Mp2HcJqKqB7GMGS7gqKq2m2ZzC7C4u"
+                placeholder="0.0.1234567"
                 value={form.publicKey}
                 onChange={handleChange("publicKey")}
               />
@@ -224,7 +224,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
                 value={form.metadata.network}
                 onChange={handleMetadataChange("network")}
               >
-                {["solana-devnet", "solana-testnet", "solana-mainnet-beta"].map((network) => (
+                {["testnet", "previewnet", "mainnet"].map((network) => (
                   <option key={network} value={network}>
                     {network}
                   </option>
@@ -233,7 +233,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
             </div>
           </div>
           <p className="mt-3 text-xs text-gray-500">
-            Backend cluster: {solanaStatus?.cluster || "devnet"}.
+            Backend network: {hederaStatus?.network || "testnet"}.
           </p>
         </section>
 

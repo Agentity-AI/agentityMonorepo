@@ -12,7 +12,7 @@ function SimulationPage() {
   const [scenarioType, setScenarioType] = useState("Token Swap");
   const [amount, setAmount] = useState(10);
   const [tokenIn, setTokenIn] = useState("USDC");
-  const [tokenOut, setTokenOut] = useState("SOL");
+  const [tokenOut, setTokenOut] = useState("HBAR");
   const {
     getSimulations,
     getSimulationScenarios,

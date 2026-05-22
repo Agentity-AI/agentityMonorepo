@@ -34,7 +34,7 @@ function Transaction() {
             Payments & Transactions
           </h1>
           <p className="text-sm text-gray-400">
-            Manage Solana AI agent payments, proofs, and execution records.
+            Manage Hedera AI agent payments, proofs, and execution records.
           </p>
         </div>
 
@@ -141,12 +141,12 @@ function Transaction() {
                   transactionId={tx.id}
                   agentName={tx.agentName || "Unassigned"}
                   type={tx.displayType}
-                  amount={`${tx.amount ?? 0} ${tx.amountUnit || "SOL"}`}
+                  amount={`${tx.amount ?? 0} ${tx.amountUnit || "HBAR"}`}
                   riskRating={tx.riskRating}
                   status={tx.status}
                   date={formatDate(tx.createdAt)}
                   txHash={tx.txHash}
-                  explorerUrl={tx.executionTrace?.explorerUrl || tx.executionTrace?.solanaProof?.explorerUrl}
+                  explorerUrl={tx.executionTrace?.explorerUrl || tx.executionTrace?.hederaProof?.explorerUrl}
                 />
               ))}
             </tbody>

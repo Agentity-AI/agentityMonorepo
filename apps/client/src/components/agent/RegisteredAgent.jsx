@@ -6,16 +6,16 @@ import { authentication } from '../../store/zustant/useZustandHook';
 function RegisteredAgent({ agent }) {
   const {verifyAgent,loading,getUserAgents} = authentication();
   const reputation = agent?.reputation?.score ?? 0;
-  const riskLevel = agent?.reputation?.riskLevel || agent?.solana?.currentRiskLevel || "low";
-  const solanaStatus = agent?.solana?.status || "not synced";
-  const explorerUrl = agent?.solana?.explorerUrl;
+  const riskLevel = agent?.reputation?.riskLevel || agent?.hedera?.currentRiskLevel || "low";
+  const hederaStatus = agent?.hedera?.status || "not synced";
+  const explorerUrl = agent?.hedera?.explorerUrl;
   const isVerified = agent?.status === "verified";
 
   async function handleVerify() {
    await verifyAgent(agent.id, {
-      solanaAddress: agent.publicKey,
-      solanaPublicKey: agent.publicKey,
-      network: agent.solana?.network || "devnet",
+      hederaAccountId: agent.publicKey,
+      hederaPublicKey: agent.publicKey,
+      network: agent.hedera?.network || "testnet",
     });
     await getUserAgents();
   }
@@ -28,7 +28,7 @@ function RegisteredAgent({ agent }) {
      ><Box className="w-4 h-4" /> <span>{agent.status}</span></td>
       <td className="ml-5.5 text-sm text-base-content/60">
         <span className="block capitalize">{riskLevel}</span>
-        <span className="block text-xs text-gray-500">{solanaStatus}</span>
+        <span className="block text-xs text-gray-500">{hederaStatus}</span>
       </td>
       <td className="ml-6.5 text-sm text-base-content/60 text-[#0847bc]">
         <button className="btn btn-sm btn-outline" onClick={handleVerify}

@@ -1,0 +1,48 @@
+{
+  "name": "@agentity/server",
+  "version": "1.0.0",
+  "description": "Hedera-backed trust, simulation, payment, and audit API for autonomous AI agents.",
+  "main": "src/server.js",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "test": "node --test",
+    "smoke": "node scripts/smoke-backend.js",
+    "cleanup:agent-reputations": "node scripts/cleanup-agent-reputations.js",
+    "sandbox:build": "docker build -t agentity-sandbox ./src/sandbox",
+    "sandbox:run": "docker run --rm agentity-sandbox",
+    "db:schema:apply": "psql \"$DATABASE_URL\" -f db/schema.sql",
+    "db:check": "node -e \"require('dotenv').config(); const { Client } = require('pg'); (async()=>{ const c=new Client({ connectionString: process.env.DATABASE_URL, ssl:{rejectUnauthorized:false} }); await c.connect(); console.log('DB OK'); await c.end(); })().catch(e=>{ console.error(e.message); process.exit(1); });\""
+  },
+  "keywords": [
+    "ai-agents",
+    "hedera",
+    "hcs",
+    "trust",
+    "web3"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-kms": "^3.1008.0",
+    "@hashgraph/sdk": "^2.79.0",
+    "@supabase/supabase-js": "^2.98.0",
+    "axios": "^1.13.5",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "morgan": "^1.10.1",
+    "pg": "^8.18.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^13.0.0",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

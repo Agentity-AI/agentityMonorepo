@@ -93,7 +93,7 @@ export const authentication = create((set, get) => ({
   highRisk: 0,
   runSimulationData: null,
   systemStatus: null,
-  solanaStatus: null,
+  hederaStatus: null,
   verificationResult: null,
   token: getAuthToken(),
 
@@ -235,7 +235,7 @@ export const authentication = create((set, get) => ({
       const res = await api.get("/system/status");
       set({
         systemStatus: res.data,
-        solanaStatus: res.data?.solana || null,
+        hederaStatus: res.data?.hedera || null,
         loading: false,
       });
       return res.data;
@@ -246,14 +246,14 @@ export const authentication = create((set, get) => ({
     }
   },
 
-  getSolanaStatus: async ({ silent = false } = {}) => {
+  getHederaStatus: async ({ silent = false } = {}) => {
     try {
       if (!silent) set({ loading: true, error: null });
-      const res = await api.get("/solana/status");
-      set({ solanaStatus: res.data, loading: false });
+      const res = await api.get("/hedera/status");
+      set({ hederaStatus: res.data, loading: false });
       return res.data;
     } catch (err) {
-      const message = messageFrom(err, "Failed to load Solana status");
+      const message = messageFrom(err, "Failed to load Hedera status");
       set({ loading: false, error: message });
       return null;
     }
@@ -318,12 +318,12 @@ export const authentication = create((set, get) => ({
     try {
       set({ loading: true, error: null });
       const res = await api.post("/wallets/link", payload);
-      toast.success("Solana wallet linked", { id: "link-wallet" });
+      toast.success("Hedera wallet linked", { id: "link-wallet" });
       set({ loading: false });
       await get().getUserAgents({ silent: true });
       return res.data;
     } catch (err) {
-      const message = messageFrom(err, "Failed to link Solana wallet");
+      const message = messageFrom(err, "Failed to link Hedera wallet");
       set({ loading: false, error: message });
       toast.error(message, { id: "link-wallet" });
       return null;
@@ -335,13 +335,13 @@ export const authentication = create((set, get) => ({
       set({ loading: true, error: null, verificationResult: null });
       const res = await api.post(`/agents/${agentId}/verify`, payload);
       set({ verificationResult: res.data, loading: false });
-      const syncStatus = res.data?.solanaSyncStatus;
+      const syncStatus = res.data?.hederaSyncStatus;
       toast.success(
         syncStatus === "synced"
-          ? "Agent verified and synced to Solana"
+          ? "Agent verified and synced to Hedera"
           : syncStatus === "failed"
-            ? "Agent verified locally; Solana sync needs attention"
-            : "Agent verified with simulated Solana proof",
+            ? "Agent verified locally; Hedera sync needs attention"
+            : "Agent verified with simulated Hedera proof",
         { id: "verify-agent" },
       );
       await get().getUserAgents({ silent: true });
@@ -354,14 +354,14 @@ export const authentication = create((set, get) => ({
     }
   },
 
-  getSolanaProofHistory: async (agentId) => {
+  getHederaProofHistory: async (agentId) => {
     try {
       set({ loading: true, error: null });
-      const res = await api.get(`/agents/${agentId}/solana-history`);
+      const res = await api.get(`/agents/${agentId}/hedera-history`);
       set({ loading: false });
       return res.data;
     } catch (err) {
-      const message = messageFrom(err, "Failed to load Solana proof history");
+      const message = messageFrom(err, "Failed to load Hedera proof history");
       set({ loading: false, error: message });
       return null;
     }
@@ -427,12 +427,12 @@ export const authentication = create((set, get) => ({
     }
   },
 
-  payTask: async (id, payload = { currency: "SOL" }) => {
+  payTask: async (id, payload = { currency: "HBAR" }) => {
     try {
       set({ loading: true, error: null });
       const res = await api.post(`/tasks/${id}/pay`, payload);
       toast.success(
-        res.data?.simulated ? "Simulated SOL payment recorded" : "SOL payment settled",
+        res.data?.simulated ? "Simulated HBAR payment recorded" : "HBAR payment settled",
         { id: "pay-task" },
       );
       set({ loading: false });
@@ -450,7 +450,7 @@ export const authentication = create((set, get) => ({
     try {
       set({ loading: true, error: null });
       const res = await api.post(`/tasks/${id}/execute`);
-      toast.success("Task executed with Solana proof", { id: "execute-task" });
+      toast.success("Task executed with Hedera proof", { id: "execute-task" });
       set({ loading: false });
       await get().getTransactionHistory();
       return res.data;

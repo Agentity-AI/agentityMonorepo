@@ -3,9 +3,9 @@ import { authentication } from "../../store/zustant/useZustandHook";
 import { Loading } from "../loading/Loading";
 
 function Topbar() {
-  const { signOut, loading, solanaStatus, user } = authentication();
-  const cluster = solanaStatus?.cluster || "devnet";
-  const proofMode = solanaStatus?.operatorCanSign ? "proofs live" : "proofs simulated";
+  const { signOut, loading, hederaStatus, user } = authentication();
+  const network = hederaStatus?.network || "testnet";
+  const proofMode = hederaStatus?.operatorCanSubmit ? "proofs live" : "proofs simulated";
 
   async function handleLogout() {
     try {
@@ -36,7 +36,7 @@ function Topbar() {
             <div className="h-4 w-4 rounded-full bg-[#0cf33a]" />
           </div>
 
-          <span className="text-xs font-mono">Solana {cluster}</span>
+          <span className="text-xs font-mono">Hedera {network}</span>
           <span className="text-xs text-[#9fffc0]">{proofMode}</span>
         </div>
 

@@ -1,6 +1,6 @@
 # Agentity Client
 
-Vite React frontend for the Agentity Solana backend.
+Vite React frontend for the Agentity Hedera backend.
 
 ## Setup
 
@@ -13,7 +13,7 @@ npm run dev
 Default API:
 
 ```text
-https://agentityserver-solana.onrender.com
+https://agentityserver-hedera.onrender.com
 ```
 
 Override locally:
@@ -44,9 +44,9 @@ npm run build:client
 - Auth uses `/auth/register` and `/auth/login`.
 - JWTs are stored in `localStorage` and sent as Bearer tokens.
 - Cookies are also supported through `withCredentials: true`.
-- Agent registration links Solana wallet data.
-- Verification surfaces synced, simulated, or failed Solana proof status.
-- The dashboard reads `/system/status` for Solana runtime details.
+- Agent registration links Hedera wallet data.
+- Verification surfaces synced, simulated, or failed Hedera proof status.
+- The dashboard reads `/system/status` for Hedera runtime details.
 
 ## Deploy
 

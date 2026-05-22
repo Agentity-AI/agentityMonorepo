@@ -1,54 +1,37 @@
 {
-  "name": "agentity-solana-backend",
+  "name": "agentity-monorepo",
   "version": "1.0.0",
-  "description": "Solana-native trust, simulation, payment, and audit backend for AI agents",
-  "main": "src/server.js",
+  "description": "Agentity AI trust platform monorepo for Hedera-backed agent identity, execution proofs, payments, and integration workflows.",
   "private": true,
   "workspaces": [
-    "apps/client"
+    "apps/client",
+    "apps/server"
   ],
   "scripts": {
-    "dev": "nodemon src/server.js",
-    "dev:api": "nodemon src/server.js",
+    "dev": "npm run dev:api",
+    "dev:api": "npm --workspace @agentity/server run dev",
     "dev:client": "npm --workspace @agentity/client run dev",
-    "start": "node src/server.js",
-    "test": "node --test",
-    "test:api": "node --test",
+    "start": "npm --workspace @agentity/server start",
+    "test": "npm run test:api",
+    "test:api": "npm --workspace @agentity/server test",
     "test:client": "npm --workspace @agentity/client run lint && npm --workspace @agentity/client run build",
     "test:all": "npm run test:api && npm run test:client",
     "build:client": "npm --workspace @agentity/client run build",
     "lint:client": "npm --workspace @agentity/client run lint",
-    "smoke": "node scripts/smoke-backend.js",
-    "cleanup:agent-reputations": "node scripts/cleanup-agent-reputations.js",
-    "sandbox:build": "docker build -t agentity-sandbox ./src/sandbox",
-    "sandbox:run": "docker run --rm agentity-sandbox",
-    "db:schema:apply": "psql \"$DATABASE_URL\" -f db/schema.sql",
-    "db:check": "node -e \"require('dotenv').config(); const { Client } = require('pg'); (async()=>{ const c=new Client({ connectionString: process.env.DATABASE_URL, ssl:{rejectUnauthorized:false} }); await c.connect(); console.log('DB OK'); await c.end(); })().catch(e=>{ console.error(e.message); process.exit(1); });\""
+    "smoke": "npm --workspace @agentity/server run smoke",
+    "cleanup:agent-reputations": "npm --workspace @agentity/server run cleanup:agent-reputations",
+    "sandbox:build": "npm --workspace @agentity/server run sandbox:build",
+    "sandbox:run": "npm --workspace @agentity/server run sandbox:run",
+    "db:schema:apply": "npm --workspace @agentity/server run db:schema:apply",
+    "db:check": "npm --workspace @agentity/server run db:check"
   },
-  "keywords": [],
+  "keywords": [
+    "ai-agents",
+    "hedera",
+    "trust",
+    "web3",
+    "agentic-ai"
+  ],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@aws-sdk/client-kms": "^3.1008.0",
-    "@solana/spl-token": "^0.4.14",
-    "@solana/web3.js": "^1.98.4",
-    "@supabase/supabase-js": "^2.98.0",
-    "axios": "^1.13.5",
-    "bs58": "^6.0.0",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "dotenv": "^17.3.1",
-    "express": "^5.2.1",
-    "morgan": "^1.10.1",
-    "pg": "^8.18.0",
-    "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.7",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1",
-    "uuid": "^13.0.0",
-    "winston": "^3.19.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.0"
-  }
+  "license": "ISC"
 }

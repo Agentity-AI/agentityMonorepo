@@ -1,48 +1,53 @@
-# Agentity Solana Monorepo
+# Agentity AI Monorepo
 
-Agentity is a Solana-native trust, simulation, payment, and audit platform for autonomous AI agents.
+Agentity is a Hedera-backed trust, simulation, payment, and audit platform for autonomous AI agents.
 
-The monorepo now contains:
+The platform helps teams answer a practical question before an AI agent moves value or acts inside a production workflow: can this agent be identified, simulated, scored, paid, executed, and audited with a tamper-evident proof trail?
 
-- `src/` - Express API for auth, agent registry, simulations, payments, task execution, alerts, and Solana proofs.
-- `apps/client/` - Vite React client integrated with the live Render backend.
-- `programs/agentity_registry/` - optional Anchor registry scaffold for a deeper on-chain demo.
-- `db/schema.sql` - PostgreSQL/Supabase schema.
-- `test/` - Node test suite for backend utilities and Solana runtime safety.
+## Why Hedera
 
-## Live Demo
+Hedera is a strong fit for Agentity's trust layer because the product needs high-throughput proofs, predictable fees, fast finality, and easy enterprise integration. In this repo, Hedera is used for:
 
-**Frontend:** [https://agentity-server-solana-client.vercel.app/](https://agentity-server-solana-client.vercel.app/)
+- Hedera Consensus Service proof notarization for agent registration, verification, and task execution.
+- Hedera account linkage for agent identity and settlement readiness.
+- HBAR and HTS payment flows, with simulated mode for local testing and live mode for funded environments.
+- Mirror node and HashScan references for proof and transaction inspection.
 
-**Backend:** [https://agentityserver-solana.onrender.com](https://agentityserver-solana.onrender.com)
+The app still keeps sandbox simulation, policy checks, alerts, KMS audit signing, and database persistence off-chain where they belong. Hedera is the trust and settlement layer, not a replacement for application-level validation.
 
-**API Documentation:** [https://agentityserver-solana.onrender.com/docs](https://agentityserver-solana.onrender.com/docs)
-
-Client default API target:
+## Monorepo Structure
 
 ```text
-VITE_API_BASE_URL=https://agentityserver-solana.onrender.com
+.
+├── apps
+│   ├── client              # React/Vite frontend
+│   └── server              # Express API, database schema, tests, smoke runner
+├── docs
+│   ├── API_INTEGRATION_GUIDE.md
+│   └── TESTING_GUIDE.md
+├── docker-compose.yml      # Local PostgreSQL helper
+├── package.json            # Workspace orchestration
+└── package-lock.json
 ```
 
-## Product Flow
+## Core Product Flow
 
-Agentity helps users answer whether an AI agent can be trusted before value moves on-chain.
-
-1. Register an AI agent with a Solana public key.
-2. Link the agent wallet and persist Solana metadata.
-3. Verify the agent locally and write or simulate a Solana proof memo.
+1. Register an AI agent with a stable public identity.
+2. Link the agent to a Hedera account.
+3. Verify the agent and create a Hedera proof record.
 4. Run sandbox simulations before execution.
-5. Create transaction policies and guardrails.
-6. Pay a task with SOL or an SPL token.
-7. Execute the task and store an execution proof.
-8. Review dashboard metrics, alerts, transactions, and proof history.
+5. Apply transaction policies and guardrails.
+6. Quote and settle payment in HBAR or an HTS token.
+7. Execute the task through the Agentity trust workflow.
+8. Persist audit logs, alerts, transaction records, and Hedera proof history.
 
 ## Stack
 
 - Node.js, Express, Sequelize
-- PostgreSQL/Supabase database
+- PostgreSQL or Supabase Postgres
 - Supabase Auth with JWT bearer tokens and httpOnly cookie support
-- Solana Web3.js for devnet/mainnet RPC, memo proofs, SOL payments, and SPL token payments
+- Hedera JavaScript SDK for HCS proofs and HBAR/HTS transfers
+- Hedera mirror node and HashScan URLs for inspection
 - React 19, Vite 7, Zustand, Axios, Tailwind CSS 4
 - Swagger/OpenAPI at `/docs`
 - Docker sandbox service for agent simulation
@@ -53,8 +58,8 @@ Agentity helps users answer whether an AI agent can be trusted before value move
 - Node.js 18+
 - npm 10+
 - PostgreSQL or Supabase database
-- Solana CLI for operator keypair generation if using real proofs/payments
 - Docker if running sandbox images locally
+- Hedera testnet or mainnet operator credentials only when live proofs or transfers are required
 
 ## Install
 
@@ -62,19 +67,18 @@ Agentity helps users answer whether an AI agent can be trusted before value move
 npm install
 ```
 
-The root package is an npm workspace. The client lives at `apps/client` and is installed from the root lockfile.
-
 ## Environment
 
-Copy the backend environment file:
+Backend:
 
 ```bash
-cp .env.example .env
+cp apps/server/.env.example apps/server/.env
 ```
 
-Required backend variables:
+Required backend values:
 
 ```bash
+PORT=5000
 DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/postgres
 DB_SYNC_ON_START=false
 SUPABASE_URL=https://YOUR_PROJECT.supabase.co
@@ -83,45 +87,40 @@ SUPABASE_SERVICE_ROLE_KEY=YOUR_SUPABASE_SERVICE_ROLE_KEY
 PUBLIC_API_BASE_URL=http://localhost:5000
 ```
 
-Solana variables:
+Hedera values:
 
 ```bash
-SOLANA_CLUSTER=devnet
-SOLANA_RPC_URL=https://api.devnet.solana.com
-SOLANA_COMMITMENT=confirmed
-SOLANA_OPERATOR_PUBLIC_KEY=YOUR_OPERATOR_PUBLIC_KEY
-SOLANA_OPERATOR_KEYPAIR_JSON=[1,2,3,...]
-SOLANA_ENABLE_REAL_PROOFS=true
-SOLANA_ENABLE_REAL_TRANSFERS=false
-SOLANA_REGISTRY_PROGRAM_ID=
+HEDERA_NETWORK=testnet
+HEDERA_MIRROR_NODE_URL=https://testnet.mirrornode.hedera.com
+HEDERA_OPERATOR_ACCOUNT_ID=
+HEDERA_OPERATOR_PRIVATE_KEY=
+HEDERA_OPERATOR_KEY_PATH=
+HEDERA_CONSENSUS_TOPIC_ID=
+HEDERA_DEFAULT_TOKEN_ID=
+HEDERA_ENABLE_REAL_PROOFS=true
+HEDERA_ENABLE_REAL_TRANSFERS=false
 ```
 
-Optional variables:
+Pricing values:
 
 ```bash
-AWS_REGION=
-AWS_KMS_KEY_ID=
-CRE_WEBHOOK_URL=
-SOLANA_PRICE_SOL_EXECUTION=0.050
-SOLANA_PRICE_SPL_EXECUTION=5.00
+HEDERA_PRICE_HBAR_SIMULATION=0.10
+HEDERA_PRICE_HBAR_AUDIT=0.20
+HEDERA_PRICE_HBAR_EXECUTION=0.50
+HEDERA_PRICE_HBAR_COORDINATION=0.15
+HEDERA_PRICE_HTS_EXECUTION=5.00
 ```
 
-Client environment:
+Client:
 
 ```bash
 cp apps/client/.env.example apps/client/.env
 ```
 
-For local API development:
+For local development:
 
 ```bash
 VITE_API_BASE_URL=http://localhost:5000
-```
-
-For deployed frontend integration:
-
-```bash
-VITE_API_BASE_URL=https://agentityserver-solana.onrender.com
 ```
 
 ## Development
@@ -138,157 +137,74 @@ Run the client:
 npm run dev:client
 ```
 
-Run both in separate terminals. By default, the API uses port `5000` and Vite uses port `5173`.
+By default, the API uses port `5000` and Vite uses port `5173`.
 
 ## Database
 
-Apply the SQL schema:
+Start local Postgres if needed:
+
+```bash
+docker compose up -d postgres
+```
+
+Apply the schema:
 
 ```bash
 npm run db:schema:apply
 ```
 
-By default, `DB_SYNC_ON_START=false`. For local development only, you may set:
+For local model sync only:
 
 ```bash
 DB_SYNC_ON_START=true
 ```
 
-## Solana Operator Setup
+## API Documentation
 
-Install the Solana CLI, then point it to devnet:
-
-```bash
-solana config set --url https://api.devnet.solana.com
-```
-
-Create an operator keypair:
-
-```bash
-solana-keygen new --outfile ~/.config/solana/agentity-operator.json
-solana address --keypair ~/.config/solana/agentity-operator.json
-```
-
-Fund it on devnet:
-
-```bash
-solana airdrop 2 --keypair ~/.config/solana/agentity-operator.json
-solana balance --keypair ~/.config/solana/agentity-operator.json
-```
-
-Use either a path:
-
-```bash
-SOLANA_OPERATOR_KEYPAIR_PATH=/absolute/path/to/agentity-operator.json
-```
-
-or a JSON secret array:
-
-```bash
-SOLANA_OPERATOR_KEYPAIR_JSON=[12,34,56,...]
-```
-
-Keep `SOLANA_ENABLE_REAL_TRANSFERS=false` until the operator wallet, payment rules, and demo flow have been reviewed.
-
-## API Endpoints
-
-Swagger is the source of truth:
+Swagger is served by the backend:
 
 ```text
 GET /docs
 ```
 
-Important endpoints:
+Important integration endpoints:
 
 - `GET /health`
 - `GET /system/status`
-- `GET /solana/status`
-- `GET /solana/transactions/:signature`
+- `GET /hedera/status`
+- `GET /hedera/transactions/:transactionId`
 - `POST /auth/register`
 - `POST /auth/login`
-- `POST /auth/logout`
 - `GET /agents/types`
 - `POST /agents/register`
 - `GET /agents/my`
 - `POST /agents/:id/verify`
-- `GET /agents/:id/solana-history`
+- `GET /agents/:id/hedera-history`
 - `POST /wallets/link`
 - `GET /simulation/scenarios`
 - `POST /simulation/run`
-- `GET /simulation/history`
 - `POST /tasks/request`
 - `POST /tasks/:id/simulate`
 - `POST /tasks/:id/pay`
 - `POST /tasks/:id/execute`
+- `GET /payments/pricing`
+- `GET /payments/history`
 - `GET /transactions/history`
 - `GET /transactions/policies`
 - `POST /transactions/policies`
+- `GET /integrations/overview`
+- `GET /integrations/snippets/:type`
 - `GET /alerts`
 - `GET /alerts/summary`
 
-## Frontend Integration
-
-The React client uses:
-
-- `VITE_API_BASE_URL` for the API origin.
-- Axios with `withCredentials: true`.
-- Bearer JWT persistence from `/auth/register` and `/auth/login`.
-- Zustand actions for dashboard, agents, wallet linking, verification, simulations, transaction policies, alerts, and Solana status.
-
-The client is deployed on Vercel and defaults to the live backend:
-
-```text
-https://agentityserver-solana.onrender.com
-```
-
-Auth requests return a JWT and also set the `agentity_jwt` httpOnly cookie. The client stores the JWT in `localStorage` and sends it as:
-
-```http
-Authorization: Bearer <jwt>
-```
-
-## Solana Proof And Payment Modes
-
-`GET /solana/status` and `GET /system/status` report:
-
-- cluster
-- RPC URL
-- commitment
-- operator public key
-- operator signing availability
-- real proof mode
-- real payment mode
-- registry program id
-- config errors
-
-If an operator keypair is not configured, the backend can still complete the demo with simulated Solana proofs and payments. If Solana env values are malformed, status endpoints return a degraded status payload instead of crashing.
-
-Payment payload:
-
-```json
-{
-  "currency": "SOL"
-}
-```
-
-SPL payment payload:
-
-```json
-{
-  "currency": "CASH-SPL",
-  "tokenMint": "TOKEN_MINT_ADDRESS",
-  "tokenDecimals": 6
-}
-```
-
-When `SOLANA_ENABLE_REAL_TRANSFERS` is not `true`, task payment still records a simulated paid state. This is useful for hackathon demos before funding an operator wallet.
+See [API_INTEGRATION_GUIDE.md](docs/API_INTEGRATION_GUIDE.md) for partner-facing payload examples.
 
 ## Testing
 
 Backend unit tests:
 
 ```bash
-npm test
+npm run test:api
 ```
 
 Client lint and production build:
@@ -297,7 +213,7 @@ Client lint and production build:
 npm run test:client
 ```
 
-Full test pass:
+Full local verification:
 
 ```bash
 npm run test:all
@@ -309,92 +225,56 @@ Smoke test against a running API:
 npm run smoke
 ```
 
-Latest verified local commands:
+See [TESTING_GUIDE.md](docs/TESTING_GUIDE.md) for real-life testing scenarios such as treasury monitoring, payment settlement, risky execution handling, and integration partner onboarding.
 
-```text
-npm test
-npm run test:client
-```
+## Hedera Proof And Payment Modes
 
-## Deployment
+`GET /hedera/status` and `GET /system/status` report:
 
-### Backend
+- network
+- mirror node URL
+- operator account ID
+- HCS topic ID
+- live proof availability
+- live payment availability
+- config errors
 
-Render should run:
+If operator credentials or an HCS topic are not configured, the backend still completes local flows using simulated Hedera proof records. This keeps demos, development, and automated testing safe.
 
-```bash
-npm install
-npm start
-```
-
-Make sure the service binds to `process.env.PORT`, which is already handled by `src/server.js`.
-
-### Frontend
-
-The frontend is deployed on Vercel. For Vercel, Netlify, or Render static hosting:
+Live proofs require:
 
 ```bash
-npm install
-npm run build --workspace @agentity/client
+HEDERA_OPERATOR_ACCOUNT_ID=0.0.x
+HEDERA_OPERATOR_PRIVATE_KEY=...
+HEDERA_CONSENSUS_TOPIC_ID=0.0.y
+HEDERA_ENABLE_REAL_PROOFS=true
 ```
 
-Publish directory:
-
-```text
-apps/client/dist
-```
-
-Set:
+Live transfers additionally require:
 
 ```bash
-VITE_API_BASE_URL=https://agentityserver-solana.onrender.com
+HEDERA_ENABLE_REAL_TRANSFERS=true
 ```
 
-## Hackathon Demo Script
-
-1. Open the deployed frontend at [https://agentity-server-solana-client.vercel.app/](https://agentity-server-solana-client.vercel.app/).
-2. Sign up or log in.
-3. Confirm the dashboard shows Solana runtime status.
-4. Register an agent with a Solana devnet public key.
-5. Verify the agent and show whether the proof is synced or simulated.
-6. Run a Token Swap simulation with `USDC -> SOL`.
-7. Create a treasury transaction policy.
-8. Pay and execute a task if test data is available.
-9. Open Transactions and show Solana proof links where signatures exist.
-10. Open the live API docs at `/docs`.
-
-## Troubleshooting
-
-If `/health` is healthy but `/solana/status` fails, check Solana env values. The code now reports malformed Solana config in `configErrors` instead of throwing from the status endpoint.
-
-If the frontend shows auth failures:
-
-- Confirm `VITE_API_BASE_URL` is correct.
-- Confirm CORS allows the deployed frontend origin.
-- Confirm `/auth/login` returns a `jwt`.
-- Clear `localStorage.agentity_auth_token` and log in again.
-
-If real proofs do not appear:
-
-- Confirm `SOLANA_ENABLE_REAL_PROOFS=true`.
-- Confirm the operator keypair is valid.
-- Confirm the operator wallet has devnet SOL.
-- Confirm `SOLANA_RPC_URL` is reachable.
-
-If payments are simulated:
-
-- Confirm `SOLANA_ENABLE_REAL_TRANSFERS=true`.
-- Confirm the operator wallet is funded.
-- Confirm SPL token mint and decimals are provided for SPL payments.
+Keep real transfers disabled until the operator account, limits, policies, and testnet funding are reviewed.
 
 ## Security Notes
 
-- Never commit `.env` or Solana keypair files.
-- Keep `SOLANA_ENABLE_REAL_TRANSFERS=false` until payment behavior is reviewed.
-- Treat all on-chain data and RPC responses as untrusted.
-- Validate account owners, payload shapes, and signatures before using Solana data in higher-risk flows.
-- Use devnet for demos unless mainnet is explicitly required and funded intentionally.
+- Never commit `.env` files or Hedera private keys.
+- Keep `HEDERA_ENABLE_REAL_TRANSFERS=false` in demos until payment behavior is approved.
+- Treat all external agent outputs as untrusted, even when a proof exists.
+- Use sandbox simulation and transaction policies before execution.
+- Use KMS signing for higher-value execution audit payloads.
+- Verify HashScan and mirror node data before using live transaction IDs in partner demos.
 
-## Submission Summary
+## Repository Remote
 
-Agentity is the trust and execution layer for autonomous AI agents on Solana. It combines identity, simulation, policy controls, payments, proof records, and monitoring into one workflow that is easy to demo and extend.
+This working tree is intended to connect to:
+
+```text
+https://github.com/Agentity-AI/agentityMonorepo.git
+```
+
+## Business Positioning
+
+Agentity is positioned as an AI agent trust platform for teams building in Web3, financial operations, DAO tooling, autonomous workflows, and agent marketplaces. The Hedera integration gives the product a credible, scalable trust layer while the application keeps the operational controls investors and partners will expect: identity, simulation, policy enforcement, payments, audit trails, alerts, and integration-ready APIs.

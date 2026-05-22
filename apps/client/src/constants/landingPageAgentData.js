@@ -27,7 +27,7 @@ const landingPageAgentData = [
     {
         id: 6,
         name: "Security-First",
-        description: "Built for Solana devnet proofs with enterprise-grade security standards."
+        description: "Built for Hedera testnet proofs with enterprise-grade security standards."
     }
 ]
 export default landingPageAgentData;

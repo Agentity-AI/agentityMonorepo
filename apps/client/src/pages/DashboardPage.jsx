@@ -3,10 +3,10 @@ import SecurityCheck from "../components/security-check/SecurityCheck";
 import AppLayout from "../layouts/AppLayouts";
 import TwoLineChart from "../components/chart/TwoLineChart";
 import { authentication } from "../store/zustant/useZustandHook";
-import SolanaStatusPanel from "../components/solana/SolanaStatusPanel";
+import HederaStatusPanel from "../components/hedera/HederaStatusPanel";
 
 function DashboardPage() {
-  const { dashBoard, solanaStatus
+  const { dashBoard, hederaStatus
   } = authentication();
 
   const {
@@ -72,7 +72,7 @@ const systemHealth = `${score.toFixed(1)}%`;
       </div>
 
       <div className="mb-6">
-        <SolanaStatusPanel status={solanaStatus} />
+        <HederaStatusPanel status={hederaStatus} />
       </div>
 
       <div className="grid gap-8 grid-cols-3">
