@@ -13,7 +13,7 @@ npm run dev
 Default API:
 
 ```text
-https://agentityserver-hedera.onrender.com
+https://agentitymonorepo.onrender.com
 ```
 
 Override locally:
