@@ -22,6 +22,7 @@
     "cleanup:agent-reputations": "npm --workspace @agentity/server run cleanup:agent-reputations",
     "sandbox:build": "npm --workspace @agentity/server run sandbox:build",
     "sandbox:run": "npm --workspace @agentity/server run sandbox:run",
+    "db:migrate:hedera": "npm --workspace @agentity/server run db:migrate:hedera",
     "db:schema:apply": "npm --workspace @agentity/server run db:schema:apply",
     "db:check": "npm --workspace @agentity/server run db:check"
   },
