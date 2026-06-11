@@ -31,6 +31,15 @@ async function createAlert({
   });
 }
 
+async function createMonitoringAlert(payload) {
+  try {
+    return await createAlert(payload);
+  } catch (error) {
+    console.error("[alerts] Failed to create monitoring alert:", error.message);
+    return null;
+  }
+}
+
 function formatAlert(alert) {
   return {
     id: alert.id,
@@ -55,5 +64,6 @@ function formatAlert(alert) {
 
 module.exports = {
   createAlert,
+  createMonitoringAlert,
   formatAlert,
 };

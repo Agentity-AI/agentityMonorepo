@@ -82,6 +82,7 @@ export const authentication = create((set, get) => ({
   agentDetails: null,
   user: getStoredUser(),
   audits: [],
+  auditDetails: null,
   tasksHistory: [],
   simulations: [],
   simulationScenarios: [],
@@ -394,6 +395,20 @@ export const authentication = create((set, get) => ({
       const message = messageFrom(err, "Failed to register audit");
       set({ loading: false, error: message });
       toast.error(message, { id: "register-audit" });
+      return null;
+    }
+  },
+
+  getAuditDetails: async (auditId) => {
+    try {
+      set({ loading: true, error: null, auditDetails: null });
+      const res = await api.get(`/audits/${auditId}`);
+      set({ loading: false, auditDetails: res.data });
+      return res.data;
+    } catch (err) {
+      const message = messageFrom(err, "Failed to load audit details");
+      set({ loading: false, error: message });
+      toast.error(message, { id: "audit-details" });
       return null;
     }
   },

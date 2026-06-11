@@ -5,7 +5,10 @@ const { requireAuth } = require("../middleware/auth");
 const SmartContractAudit = require("../models/smartContractAudit");
 const { analyzeSourceCode } = require("../services/audit/contractAuditService");
 const { logEvent } = require("../services/audit/logEvent");
-const { createAlert } = require("../services/alerts/alertService");
+const {
+  createAlert,
+  createMonitoringAlert,
+} = require("../services/alerts/alertService");
 const {
   ValidationError,
   optionalUrl,
@@ -161,6 +164,21 @@ router.post("/", requireAuth, async (req, res, next) => {
         sourceId: audit.id,
         sourceType: "smart_contract_audit",
         message: `Audit for ${trimmedContractName} returned ${audit.risk_level} risk.`,
+        metadata: {
+          contractName: trimmedContractName,
+          findings: audit.findings,
+          consensusScore: audit.consensus_score,
+        },
+      });
+    } else {
+      await createMonitoringAlert({
+        userId: req.user.id,
+        title: "Contract audit completed",
+        severity: audit.risk_level === "safe" ? "low" : audit.risk_level,
+        type: "contract_audit_completed",
+        sourceId: audit.id,
+        sourceType: "smart_contract_audit",
+        message: `Audit for ${trimmedContractName} completed with ${audit.risk_level} risk.`,
         metadata: {
           contractName: trimmedContractName,
           findings: audit.findings,

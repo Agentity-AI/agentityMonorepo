@@ -82,17 +82,23 @@ function AlertPage() {
           </div>
         </div>
 
-        <div className="mt-6 h-64 rounded-xl w-full bg-[#0f0f0f] border-none ">
-            <h6 className="ml-5 text-xl text-base-content/60 w-full py-8  ">
-           Alert Feed {alerts.length ? alerts.length : 0} 
+        <div className="mt-6 min-h-64 rounded-xl w-full bg-[#0f0f0f] border-none pb-5">
+            <h6 className="ml-5 text-xl text-base-content/60 w-full py-8">
+           Alert Feed {alerts.length ? alerts.length : 0}
             </h6>
             <div className="grid gap-4 px-5 grid-cols-1">
                 {
                   alerts.map((alert)=>{
-                      return <AlertCard key={alert.id}   title={alert.title} description={alert.message}
-                            dataTime={formatDate(alert.createdAt)} />
+                      return <AlertCard key={alert.id} title={alert.title} description={alert.message}
+                            dataTime={formatDate(alert.createdAt)} severity={alert.severity}
+                            status={alert.status} type={alert.type} />
                     })
                 }
+                {!alerts.length && (
+                  <div className="rounded-lg border border-white/10 bg-black/20 p-5 text-sm text-gray-400">
+                    No alerts yet. Register an agent, run a simulation, create a policy, or submit a contract audit to populate monitoring events.
+                  </div>
+                )}
             </div>
         </div>
 

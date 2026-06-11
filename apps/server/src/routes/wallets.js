@@ -6,6 +6,7 @@ const Agent = require("../models/agent");
 const AgentWallet = require("../models/agentWallet");
 const { requireAuth } = require("../middleware/auth");
 const { logEvent } = require("../services/audit/logEvent");
+const { createMonitoringAlert } = require("../services/alerts/alertService");
 const {
   ValidationError,
   requireHederaAccountId,
@@ -169,6 +170,21 @@ router.post("/link", requireAuth, async (req, res, next) => {
         hederaAccountId: trimmedHederaAccountId,
         network,
         kmsKeyId: trimmedKmsKeyId || null,
+      },
+    });
+
+    await createMonitoringAlert({
+      userId: req.user.id,
+      agentId: agent.id,
+      sourceId: wallet.id,
+      sourceType: "agent_wallet",
+      title: "Hedera wallet linked",
+      severity: "low",
+      type: "wallet_linked",
+      message: `${agent.agent_name} is linked to Hedera account ${wallet.hedera_account_id}.`,
+      metadata: {
+        hederaAccountId: wallet.hedera_account_id,
+        network: wallet.network,
       },
     });
 

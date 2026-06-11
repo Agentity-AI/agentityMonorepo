@@ -1,10 +1,10 @@
-function AuditTable({  contractname, risklevel, consensusScore, status }) {
-     const statusColor =
-    status === "Approved"
+function AuditTable({ contractname, risklevel, consensusScore, status, onView }) {
+  const statusColor =
+    status === "completed"
       ? "text-green-500"
-      : status === "Rejected"
-      ? "text-red-500"
-      : "text-yellow-500";
+      : status === "failed"
+        ? "text-red-500"
+        : "text-yellow-500";
 
   return (
      <tr className="py-2 h-10 w-full border-b grid grid-cols-5 border-[#514c4c] px-4 hover:bg-[#2f2f2f]">
@@ -32,7 +32,7 @@ function AuditTable({  contractname, risklevel, consensusScore, status }) {
         <button
           type="button"
           className="btn btn-sm btn-outline"
-         
+          onClick={onView}
         >
          view
         </button>
@@ -41,4 +41,4 @@ function AuditTable({  contractname, risklevel, consensusScore, status }) {
   )
 }
 
-export default AuditTable
+export default AuditTable;

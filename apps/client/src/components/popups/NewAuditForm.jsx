@@ -8,7 +8,26 @@ const {registerAudit,loading,getAuditHistory} = authentication();
      {
       contractName: "MyContract",
       sourceType: "paste",
-      sourceCode: "contract Vault { function withdraw() external {} }",
+      sourceCode: `// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract RiskyVault {
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function withdraw(address payable recipient) external {
+        require(tx.origin == owner, "not owner");
+        (bool ok, ) = recipient.call{value: address(this).balance}("");
+        require(ok, "transfer failed");
+    }
+
+    function execute(address target, bytes calldata data) external {
+        target.delegatecall(data);
+    }
+}`,
       githubUrl:
         "https://github.com/example/protocol/blob/main/contracts/Vault.sol",
     }

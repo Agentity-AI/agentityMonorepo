@@ -16,7 +16,10 @@ const { createExecutionProof } = require("../services/hedera/registryService");
 const { signPayloadWithKms } = require("../services/aws/kmsService");
 const { executeAgentWorkflow } = require("../services/execution/agentExecutionService");
 const { logEvent } = require("../services/audit/logEvent");
-const { createAlert } = require("../services/alerts/alertService");
+const {
+  createAlert,
+  createMonitoringAlert,
+} = require("../services/alerts/alertService");
 const { buildSimulationAlert } = require("../services/alerts/alertUtils");
 const { createTransactionRecord } = require("../services/transactions/transactionService");
 const {
@@ -292,6 +295,22 @@ router.post("/:id/simulate", requireAuth, async (req, res, next) => {
         },
         ...alertPayload,
       });
+    } else {
+      await createMonitoringAlert({
+        userId: req.user.id,
+        agentId: agent.id,
+        sourceId: simulation.id,
+        sourceType: "simulation_run",
+        title: "Task simulation completed",
+        severity: "low",
+        type: "task_simulation_completed",
+        message: `${task.task_type} simulation completed for task ${task.id}.`,
+        metadata: {
+          taskId: task.id,
+          riskScore,
+          vulnerabilitiesCount,
+        },
+      });
     }
 
     await logEvent(req, {
@@ -481,6 +500,26 @@ router.post("/:id/pay", requireAuth, async (req, res, next) => {
           paymentId: result.payment.id,
           transactionId: result.transactionId,
           simulated: result.simulated,
+        },
+      });
+
+      await createMonitoringAlert({
+        userId: req.user.id,
+        agentId: task.agent_id,
+        sourceId: task.id,
+        sourceType: "task_execution",
+        title: "Task payment recorded",
+        severity: result.simulated ? "medium" : "low",
+        type: "payment_recorded",
+        message: result.simulated
+          ? `Simulated ${result.payment.currency} payment recorded for task ${task.id}.`
+          : `${result.payment.currency} payment settled for task ${task.id}.`,
+        metadata: {
+          taskId: task.id,
+          paymentId: result.payment.id,
+          transactionId: result.transactionId,
+          simulated: result.simulated,
+          currency: result.payment.currency,
         },
       });
 
@@ -706,6 +745,25 @@ router.post("/:id/execute", requireAuth, async (req, res, next) => {
           taskId: task.id,
           kmsAuditId: kmsResult.auditId,
           hederaTransactionId: hederaProof.transactionId,
+        },
+      });
+
+      await createMonitoringAlert({
+        userId: req.user.id,
+        agentId: agent.id,
+        sourceId: task.id,
+        sourceType: "task_execution",
+        title: "Task execution completed",
+        severity: hederaProof.simulated ? "medium" : "low",
+        type: "task_execution_completed",
+        message: hederaProof.simulated
+          ? `Task ${task.id} executed with a simulated Hedera proof.`
+          : `Task ${task.id} executed with a Hedera proof.`,
+        metadata: {
+          taskId: task.id,
+          hederaTransactionId: hederaProof.transactionId,
+          proofHash: hederaProof.proofHash,
+          simulatedProof: hederaProof.simulated,
         },
       });
 

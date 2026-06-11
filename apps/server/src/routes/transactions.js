@@ -10,6 +10,7 @@ const {
   listPoliciesForUser,
   listTransactionsForUser,
 } = require("../services/transactions/transactionService");
+const { createMonitoringAlert } = require("../services/alerts/alertService");
 const {
   ValidationError,
   optionalEnum,
@@ -451,6 +452,20 @@ router.post("/policies", requireAuth, async (req, res, next) => {
       status:
         optionalEnum(req.body?.status, "status", ["active", "disabled"]) ||
         (policyEnabled ? "active" : "disabled"),
+    });
+
+    await createMonitoringAlert({
+      userId: req.user.id,
+      sourceId: policy.id,
+      sourceType: "transaction_policy",
+      title: "Transaction policy created",
+      severity: "low",
+      type: "transaction_policy_created",
+      message: `${policy.name} is ${policy.status}.`,
+      metadata: {
+        policyId: policy.id,
+        rules: policy.rules,
+      },
     });
 
     return res.status(201).json(formatPolicy(policy));

@@ -8,7 +8,8 @@ import AuditTable from '../components/table/AuditTable';
 
 function SmartContract() {
     const [open, setOpen] = React.useState(false);
-    const {getAuditHistory,audits}=authentication();
+    const [detailsOpen, setDetailsOpen] = React.useState(false);
+    const {getAuditHistory,getAuditDetails,audits,auditDetails}=authentication();
 
     useEffect(() => {
         const loadAuditHistory = async () => {
@@ -21,6 +22,11 @@ function SmartContract() {
 
         loadAuditHistory();
     }, [getAuditHistory]);
+
+    const handleViewAudit = async (auditId) => {
+      const details = await getAuditDetails(auditId);
+      if (details) setDetailsOpen(true);
+    };
 
   return (
     <AppLayout>
@@ -45,7 +51,7 @@ function SmartContract() {
         <div className="items-center gap-4 p-4 border-b border-[#514c4c]">
           <div className="flex relative left-4">
             <Bot className="text-primary " size={24} />
-            <h2 className="text-xl font-semibold">Registered Agents</h2>
+            <h2 className="text-xl font-semibold">Contract Audits</h2>
             <span className="text-xl text-[#f5f8f9]">
               ({audits?.length ?? 0})
             </span>
@@ -75,7 +81,8 @@ function SmartContract() {
               <tbody >
                 {audits&&(audits.map((audit) => (
                   <AuditTable key={audit.id} 
-                   contractname={audit.contractName} risklevel={audit.riskLevel} consensusScore={audit.consensusScore} status={audit.status} />
+                   contractname={audit.contractName} risklevel={audit.riskLevel} consensusScore={audit.consensusScore}
+                   status={audit.status} onView={() => handleViewAudit(audit.id)} />
                 )))}
               </tbody>
             </table>
@@ -85,6 +92,60 @@ function SmartContract() {
 
       <Modal open={open} onClose={() => setOpen(false)}>
         <NewAuditForm onClose={() => setOpen(false)} />
+      </Modal>
+
+      <Modal open={detailsOpen} onClose={() => setDetailsOpen(false)}>
+        {auditDetails && (
+          <div className="space-y-5 rounded-2xl border border-white/10 bg-[#0f0f0f] p-6 text-sm text-gray-200">
+            <div>
+              <h2 className="text-xl font-semibold text-white">
+                {auditDetails.contractName}
+              </h2>
+              <p className="mt-1 text-gray-400">{auditDetails.summary}</p>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-lg border border-white/10 bg-black/30 p-3">
+                <p className="text-xs text-gray-400">Risk</p>
+                <p className="text-lg font-semibold capitalize">{auditDetails.riskLevel}</p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-black/30 p-3">
+                <p className="text-xs text-gray-400">Score</p>
+                <p className="text-lg font-semibold">{auditDetails.consensusScore}</p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-black/30 p-3">
+                <p className="text-xs text-gray-400">Status</p>
+                <p className="text-lg font-semibold capitalize">{auditDetails.status}</p>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="mb-3 text-base font-semibold text-white">Findings</h3>
+              <div className="max-h-80 space-y-3 overflow-y-auto pr-2">
+                {auditDetails.findings?.length ? (
+                  auditDetails.findings.map((finding) => (
+                    <div
+                      key={`${finding.title}-${finding.severity}`}
+                      className="rounded-lg border border-white/10 bg-black/30 p-3"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-semibold text-white">{finding.title}</p>
+                        <span className="rounded-full border border-white/10 px-2 py-0.5 text-xs uppercase text-gray-300">
+                          {finding.severity}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-gray-400">{finding.description}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="rounded-lg border border-white/10 bg-black/30 p-3 text-gray-400">
+                    No findings were detected for this audit.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </Modal>
     </AppLayout>
    

@@ -13,11 +13,30 @@ import AlertPage from "./pages/AlertPage.jsx";
 import Documentation from "./pages/Documentation.jsx";
 
 function App() {
-  const { dashBoard, bootstrapSession, bootstrapping } = authentication();
+  const { dashBoard, bootstrapSession, initialized, bootstrapping } = authentication();
 
   useEffect(() => {
     bootstrapSession();
   }, [bootstrapSession]);
+
+  if (!initialized) {
+    return (
+      <>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+          }}
+        />
+        <div className="flex min-h-screen items-center justify-center bg-base-300 text-base-content">
+          <div className="text-center">
+            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[#14f195] border-t-transparent" />
+            <p className="text-sm text-base-content/70">Restoring your session...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

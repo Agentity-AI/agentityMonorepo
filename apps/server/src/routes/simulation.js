@@ -6,7 +6,10 @@ const SimulationRun = require("../models/simulationRun");
 const { requireAuth } = require("../middleware/auth");
 const { simulateAgent } = require("../services/sandbox/sandboxService");
 const { logEvent } = require("../services/audit/logEvent");
-const { createAlert } = require("../services/alerts/alertService");
+const {
+  createAlert,
+  createMonitoringAlert,
+} = require("../services/alerts/alertService");
 const { buildSimulationAlert } = require("../services/alerts/alertUtils");
 const {
   ValidationError,
@@ -315,6 +318,23 @@ router.post("/run", requireAuth, async (req, res, next) => {
         },
         ...alertPayload,
       });
+    } else {
+      await createMonitoringAlert({
+        userId: req.user.id,
+        agentId: agent.id,
+        sourceId: run.id,
+        sourceType: "simulation_run",
+        title: "Simulation completed",
+        severity: "low",
+        type: "simulation_completed",
+        message: `${scenarioType} simulation completed for ${agent.agent_name}.`,
+        metadata: {
+          scenarioType,
+          parameters: parameters || {},
+          riskScore,
+          vulnerabilitiesCount,
+        },
+      });
     }
 
     await logEvent(req, {
@@ -439,6 +459,22 @@ router.post("/:id", requireAuth, async (req, res, next) => {
           result,
         },
         ...alertPayload,
+      });
+    } else {
+      await createMonitoringAlert({
+        userId: req.user.id,
+        agentId: agent.id,
+        sourceId: agent.id,
+        sourceType: "agent",
+        title: "Simulation completed",
+        severity: "low",
+        type: "simulation_completed",
+        message: `${scenarioType} simulation completed for ${agent.agent_name}.`,
+        metadata: {
+          scenarioType,
+          parameters,
+          result,
+        },
       });
     }
 

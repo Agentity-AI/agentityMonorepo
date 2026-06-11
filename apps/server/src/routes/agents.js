@@ -18,7 +18,10 @@ const {
   getAgentHistory,
 } = require("../services/hedera/registryService");
 const { linkWalletToAgent } = require("../services/hedera/walletService");
-const { createAlert } = require("../services/alerts/alertService");
+const {
+  createAlert,
+  createMonitoringAlert,
+} = require("../services/alerts/alertService");
 const { getHederaNetwork, getHederaExplorerUrl } = require("../config/hedera");
 const {
   ValidationError,
@@ -444,6 +447,21 @@ router.post("/register", requireAuth, async (req, res) => {
     });
 
     await transaction.commit();
+
+    await createMonitoringAlert({
+      userId: req.user.id,
+      agentId: agent.id,
+      sourceId: agent.id,
+      sourceType: "agent",
+      title: "Agent registered",
+      severity: "low",
+      type: "agent_registered",
+      message: `${agent.agent_name} was registered and is ready for verification.`,
+      metadata: {
+        agentType: p.agent_type,
+        fingerprint: agent.fingerprint,
+      },
+    });
 
     return res.status(201).json({
       id: agent.id,
@@ -1001,6 +1019,26 @@ router.post("/:id/verify", requireAuth, async (req, res) => {
       agentId: agent.id,
       payload: {
         hederaSyncStatus,
+      },
+    });
+
+    await createMonitoringAlert({
+      userId: req.user.id,
+      agentId: agent.id,
+      sourceId: agent.id,
+      sourceType: "agent",
+      title: "Agent verified",
+      severity: hederaSyncStatus === "failed" ? "high" : "low",
+      type: "agent_verified",
+      message:
+        hederaSyncStatus === "synced"
+          ? `${agent.agent_name} was verified and synced to Hedera.`
+          : hederaSyncStatus === "simulated"
+            ? `${agent.agent_name} was verified with a simulated Hedera proof.`
+            : `${agent.agent_name} was verified locally, but Hedera sync needs attention.`,
+      metadata: {
+        hederaSyncStatus,
+        hedera,
       },
     });
 
