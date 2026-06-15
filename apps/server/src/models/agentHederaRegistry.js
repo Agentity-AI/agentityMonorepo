@@ -55,7 +55,7 @@ const AgentHederaRegistry = sequelize.define(
     network: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: "testnet",
+      defaultValue: "mainnet",
     },
     metadata: {
       type: DataTypes.JSONB,

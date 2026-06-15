@@ -34,7 +34,7 @@ function Transaction() {
             Payments & Transactions
           </h1>
           <p className="text-sm text-gray-400">
-            Manage Hedera AI agent payments, proofs, and execution records.
+            Manage AI agent payments, proofs, and execution records.
           </p>
         </div>
 
@@ -141,7 +141,7 @@ function Transaction() {
                   transactionId={tx.id}
                   agentName={tx.agentName || "Unassigned"}
                   type={tx.displayType}
-                  amount={`${tx.amount ?? 0} ${tx.amountUnit || "HBAR"}`}
+                  amount={`${tx.amount ?? 0} ${tx.amountUnit || "units"}`}
                   riskRating={tx.riskRating}
                   status={tx.status}
                   date={formatDate(tx.createdAt)}

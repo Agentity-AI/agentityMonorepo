@@ -38,7 +38,7 @@ const { buildHederaRuntimeStatus } = require("../services/hedera/client");
  *                   additionalProperties: true
  *                 network:
  *                   type: string
- *                   example: "testnet"
+ *                   example: "mainnet"
  */
 router.get("/status", async (req, res) => {
   const databaseStatus = req.app.locals.databaseStatus || {
@@ -53,7 +53,7 @@ router.get("/status", async (req, res) => {
     databaseCheckedAt: databaseStatus.checkedAt,
     databaseSyncStatus: databaseStatus.syncStatus,
     hedera: buildHederaRuntimeStatus(),
-    network: process.env.HEDERA_NETWORK || "testnet",
+    network: process.env.HEDERA_NETWORK || "mainnet",
   });
 });
 

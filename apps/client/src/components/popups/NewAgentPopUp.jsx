@@ -7,9 +7,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
     registerAgent,
     linkWalletToAgent,
     getAgentTypes,
-    getSystemStatus,
     agentTypes,
-    hederaStatus,
     loading,
   } = authentication();
 
@@ -21,14 +19,12 @@ function NewAgentPopUp({ onClose, onSubmit }) {
     apiEndpoint: "",
     metadata: {
       strategy: "",
-      network: "testnet"
     },
   });
 
   useEffect(() => {
     getAgentTypes({ silent: true });
-    getSystemStatus({ silent: true });
-  }, [getAgentTypes, getSystemStatus]);
+  }, [getAgentTypes]);
 
   const handleChange = (field) => (e) => {
     setForm((prev) => ({
@@ -58,8 +54,8 @@ function NewAgentPopUp({ onClose, onSubmit }) {
       apiEndpoint: form.apiEndpoint,
       metadata: form.metadata,
     };
-    if (!payload.agentName || !payload.publicKey || !payload.agentType || !payload.metadata.network
-      || payload.agentName.trim() === "" || !payload.publicKey.trim() || payload.agentType.trim() === "" || payload.metadata.network.trim() === ""
+    if (!payload.agentName || !payload.publicKey || !payload.agentType
+      || payload.agentName.trim() === "" || !payload.publicKey.trim() || payload.agentType.trim() === ""
     ) {
       toast.error("Please fill in all required fields", {
         id: "register-agent",
@@ -74,7 +70,6 @@ function NewAgentPopUp({ onClose, onSubmit }) {
       agentId: agent.id,
       hederaAccountId: payload.publicKey,
       hederaPublicKey: payload.publicKey,
-      network: payload.metadata.network,
     });
 
     onClose?.(true);
@@ -88,7 +83,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
         <div>
           <h2 className="text-lg font-semibold text-white">Register New Agent</h2>
           <p className="text-xs text-gray-400">
-            Define capabilities and Hedera metadata for your agent.
+            Define capabilities, identity, and settlement details for your agent.
           </p>
         </div>
         <button
@@ -166,7 +161,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
             {/* Public Key */}
             <div className="form-control">
               <label className="mb-1 block text-xs text-gray-400">
-                Public key
+                Agent account or public key
               </label>
               <input
                 type="text"
@@ -193,14 +188,12 @@ function NewAgentPopUp({ onClose, onSubmit }) {
           </div>
         </section>
 
-        {/* Metadata section */}
         <section className="rounded-xl border border-white/10 bg-white/5 p-4">
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
             Metadata
           </h3>
 
           <div className="grid gap-4 md:grid-cols-2">
-            {/* Strategy */}
             <div className="form-control">
               <label className="mb-1 block text-xs text-gray-400">
                 Strategy
@@ -213,28 +206,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
                 onChange={handleMetadataChange("strategy")}
               />
             </div>
-
-            {/* Network */}
-            <div className="form-control">
-              <label className="mb-1 block text-xs text-gray-400">
-                Network
-              </label>
-              <select
-                className="select px-2 select-bordered w-full border-white/10 bg-black/40 text-sm text-gray-100 focus:border-indigo-500 focus:outline-none"
-                value={form.metadata.network}
-                onChange={handleMetadataChange("network")}
-              >
-                {["testnet", "previewnet", "mainnet"].map((network) => (
-                  <option key={network} value={network}>
-                    {network}
-                  </option>
-                ))}
-              </select>
-            </div>
           </div>
-          <p className="mt-3 text-xs text-gray-500">
-            Backend network: {hederaStatus?.network || "testnet"}.
-          </p>
         </section>
 
         {/* Actions */}

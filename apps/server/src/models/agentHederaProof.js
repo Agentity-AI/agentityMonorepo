@@ -52,7 +52,7 @@ const AgentHederaProof = sequelize.define(
     network: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: "testnet",
+      defaultValue: "mainnet",
     },
     status: {
       type: DataTypes.ENUM("pending", "confirmed", "simulated", "failed"),

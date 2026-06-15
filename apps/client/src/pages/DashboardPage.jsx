@@ -3,7 +3,7 @@ import SecurityCheck from "../components/security-check/SecurityCheck";
 import AppLayout from "../layouts/AppLayouts";
 import TwoLineChart from "../components/chart/TwoLineChart";
 import { authentication } from "../store/zustant/useZustandHook";
-import HederaStatusPanel from "../components/hedera/HederaStatusPanel";
+import TrustRuntimePanel from "../components/trust/TrustRuntimePanel";
 
 function DashboardPage() {
   const { dashBoard, hederaStatus
@@ -72,7 +72,7 @@ const systemHealth = `${score.toFixed(1)}%`;
       </div>
 
       <div className="mb-6">
-        <HederaStatusPanel status={hederaStatus} />
+        <TrustRuntimePanel status={hederaStatus} />
       </div>
 
       <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">

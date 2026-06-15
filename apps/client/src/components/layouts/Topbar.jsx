@@ -5,8 +5,7 @@ import { Loading } from "../loading/Loading";
 
 function Topbar() {
   const { signOut, loading, hederaStatus, user } = authentication();
-  const network = hederaStatus?.network || "testnet";
-  const proofMode = hederaStatus?.operatorCanSubmit ? "proofs live" : "proofs simulated";
+  const proofMode = hederaStatus?.operatorCanSubmit ? "proofs live" : "proofs syncing";
 
   async function handleLogout() {
     try {
@@ -30,7 +29,7 @@ function Topbar() {
             <div className="h-4 w-4 rounded-full bg-[#0cf33a]" />
           </div>
 
-          <span className="truncate text-xs font-mono">Hedera {network}</span>
+          <span className="truncate text-xs font-mono">Trust Network</span>
           <span className="hidden text-xs text-[#9fffc0] sm:inline">{proofMode}</span>
         </div>
 

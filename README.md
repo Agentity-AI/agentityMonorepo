@@ -90,8 +90,8 @@ PUBLIC_API_BASE_URL=http://localhost:5000
 Hedera values:
 
 ```bash
-HEDERA_NETWORK=testnet
-HEDERA_MIRROR_NODE_URL=https://testnet.mirrornode.hedera.com
+HEDERA_NETWORK=mainnet
+HEDERA_MIRROR_NODE_URL=https://mainnet-public.mirrornode.hedera.com
 HEDERA_OPERATOR_ACCOUNT_ID=
 HEDERA_OPERATOR_PRIVATE_KEY=
 HEDERA_OPERATOR_KEY_PATH=

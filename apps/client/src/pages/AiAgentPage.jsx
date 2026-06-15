@@ -57,7 +57,7 @@ function AiAgent() {
                     Status
                   </td>
                   <td className="text-left text-sm text-base-content/60">
-                    Hedera Proof
+                    Proof Status
                   </td>
                   <td className="text-left text-sm text-base-content/60">
                     Actions

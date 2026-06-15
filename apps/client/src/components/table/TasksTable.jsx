@@ -26,13 +26,13 @@ function SimulationTable({ items = [] }) {
               Status
             </th>
             <th className="border border-gray-700 px-3 py-2 text-left">
-              HBAR Amount
+              Payment Amount
             </th>
             <th className="border border-gray-700 px-3 py-2 text-left">
               Payment Status
             </th>
             <th className="border border-gray-700 px-3 py-2 text-left">
-              Hedera Transaction
+              Settlement Reference
             </th>
             <th className="border border-gray-700 px-3 py-2 text-left">
               Created At
@@ -67,7 +67,7 @@ function SimulationTable({ items = [] }) {
                   {payment.status ?? "—"}
                 </td>
                 <td className="border border-gray-700 px-3 py-2">
-                  {payment.hederaTransactionId ?? "—"}
+                  {payment.hederaTransactionId ? "Recorded" : "—"}
                 </td>
                <td className="border border-gray-700 px-3 py-2">
                   <button onClick={() => executeTask(item.id)}>execute</button>

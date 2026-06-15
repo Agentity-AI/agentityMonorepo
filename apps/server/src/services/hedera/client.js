@@ -76,7 +76,7 @@ function buildHederaRuntimeStatus() {
   const network = readHederaConfig(
     "HEDERA_NETWORK",
     getHederaNetwork,
-    "testnet",
+    "mainnet",
     configErrors,
   );
   const mirrorNodeUrl = readHederaConfig(

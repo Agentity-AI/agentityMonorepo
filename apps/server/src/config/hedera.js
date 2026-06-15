@@ -17,8 +17,8 @@ const SUPPORTED_NETWORKS = new Set([
 let cachedOperatorKey = undefined;
 
 function getHederaNetwork() {
-  const network = process.env.HEDERA_NETWORK || process.env.HEDERA_CLUSTER || "testnet";
-  return SUPPORTED_NETWORKS.has(network) ? network : "testnet";
+  const network = process.env.HEDERA_NETWORK || process.env.HEDERA_CLUSTER || "mainnet";
+  return SUPPORTED_NETWORKS.has(network) ? network : "mainnet";
 }
 
 function getHederaMirrorNodeUrl() {

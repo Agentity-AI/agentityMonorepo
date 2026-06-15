@@ -254,7 +254,7 @@ export const authentication = create((set, get) => ({
       set({ hederaStatus: res.data, loading: false });
       return res.data;
     } catch (err) {
-      const message = messageFrom(err, "Failed to load Hedera status");
+      const message = messageFrom(err, "Failed to load runtime status");
       set({ loading: false, error: message });
       return null;
     }
@@ -319,12 +319,12 @@ export const authentication = create((set, get) => ({
     try {
       set({ loading: true, error: null });
       const res = await api.post("/wallets/link", payload);
-      toast.success("Hedera wallet linked", { id: "link-wallet" });
+      toast.success("Settlement account linked", { id: "link-wallet" });
       set({ loading: false });
       await get().getUserAgents({ silent: true });
       return res.data;
     } catch (err) {
-      const message = messageFrom(err, "Failed to link Hedera wallet");
+      const message = messageFrom(err, "Failed to link settlement account");
       set({ loading: false, error: message });
       toast.error(message, { id: "link-wallet" });
       return null;
@@ -339,10 +339,10 @@ export const authentication = create((set, get) => ({
       const syncStatus = res.data?.hederaSyncStatus;
       toast.success(
         syncStatus === "synced"
-          ? "Agent verified and synced to Hedera"
+          ? "Agent verified and synced to the proof layer"
           : syncStatus === "failed"
-            ? "Agent verified locally; Hedera sync needs attention"
-            : "Agent verified with simulated Hedera proof",
+            ? "Agent verified locally; proof sync needs attention"
+            : "Agent verified with a local proof",
         { id: "verify-agent" },
       );
       await get().getUserAgents({ silent: true });
@@ -362,7 +362,7 @@ export const authentication = create((set, get) => ({
       set({ loading: false });
       return res.data;
     } catch (err) {
-      const message = messageFrom(err, "Failed to load Hedera proof history");
+      const message = messageFrom(err, "Failed to load proof history");
       set({ loading: false, error: message });
       return null;
     }
@@ -447,7 +447,7 @@ export const authentication = create((set, get) => ({
       set({ loading: true, error: null });
       const res = await api.post(`/tasks/${id}/pay`, payload);
       toast.success(
-        res.data?.simulated ? "Simulated HBAR payment recorded" : "HBAR payment settled",
+        res.data?.simulated ? "Payment recorded" : "Payment settled",
         { id: "pay-task" },
       );
       set({ loading: false });
@@ -465,7 +465,7 @@ export const authentication = create((set, get) => ({
     try {
       set({ loading: true, error: null });
       const res = await api.post(`/tasks/${id}/execute`);
-      toast.success("Task executed with Hedera proof", { id: "execute-task" });
+      toast.success("Task executed with proof record", { id: "execute-task" });
       set({ loading: false });
       await get().getTransactionHistory();
       return res.data;

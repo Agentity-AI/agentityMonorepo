@@ -26,7 +26,7 @@ const AgentWallet = sequelize.define(
     network: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: "testnet",
+      defaultValue: "mainnet",
     },
     wallet_type: {
       type: DataTypes.STRING,

@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS public.agent_wallets (
   agent_id UUID NOT NULL UNIQUE REFERENCES public."Agents"(id) ON DELETE CASCADE,
   hedera_account_id TEXT NOT NULL UNIQUE,
   hedera_public_key TEXT NOT NULL,
-  network TEXT NOT NULL DEFAULT 'testnet',
+  network TEXT NOT NULL DEFAULT 'mainnet',
   wallet_type TEXT NOT NULL DEFAULT 'agent',
   kms_key_id TEXT,
   status TEXT NOT NULL DEFAULT 'linked',
@@ -55,7 +55,7 @@ END $$;
 ALTER TABLE public.agent_wallets
   ADD COLUMN IF NOT EXISTS hedera_account_id TEXT,
   ADD COLUMN IF NOT EXISTS hedera_public_key TEXT,
-  ADD COLUMN IF NOT EXISTS network TEXT DEFAULT 'testnet',
+  ADD COLUMN IF NOT EXISTS network TEXT DEFAULT 'mainnet',
   ADD COLUMN IF NOT EXISTS wallet_type TEXT DEFAULT 'agent',
   ADD COLUMN IF NOT EXISTS kms_key_id TEXT,
   ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'linked',
@@ -89,7 +89,7 @@ END $$;
 
 UPDATE public.agent_wallets
 SET
-  network = COALESCE(network, 'testnet'),
+  network = COALESCE(network, 'mainnet'),
   wallet_type = COALESCE(wallet_type, 'agent'),
   status = COALESCE(status, 'linked'),
   created_at = COALESCE(created_at, now()),
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS public.agent_hedera_registry (
   last_verified_at TIMESTAMPTZ,
   verification_count INTEGER DEFAULT 0,
   status TEXT DEFAULT 'registered',
-  network TEXT NOT NULL DEFAULT 'testnet',
+  network TEXT NOT NULL DEFAULT 'mainnet',
   metadata JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -150,7 +150,7 @@ CREATE TABLE IF NOT EXISTS public.agent_hedera_proofs (
   score DOUBLE PRECISION,
   is_healthy BOOLEAN,
   score_delta DOUBLE PRECISION,
-  network TEXT NOT NULL DEFAULT 'testnet',
+  network TEXT NOT NULL DEFAULT 'mainnet',
   status TEXT NOT NULL DEFAULT 'pending',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()

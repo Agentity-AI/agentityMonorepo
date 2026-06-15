@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS public.agent_wallets (
   agent_id UUID NOT NULL UNIQUE REFERENCES public."Agents"(id) ON DELETE CASCADE,
   hedera_account_id TEXT NOT NULL UNIQUE,
   hedera_public_key TEXT NOT NULL,
-  network TEXT NOT NULL DEFAULT 'testnet',
+  network TEXT NOT NULL DEFAULT 'mainnet',
   wallet_type TEXT NOT NULL DEFAULT 'agent',
   kms_key_id TEXT,
   status TEXT NOT NULL DEFAULT 'linked',
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS public.agent_hedera_registry (
   last_verified_at TIMESTAMPTZ,
   verification_count INTEGER DEFAULT 0,
   status TEXT DEFAULT 'registered',
-  network TEXT NOT NULL DEFAULT 'testnet',
+  network TEXT NOT NULL DEFAULT 'mainnet',
   metadata JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS public.agent_hedera_proofs (
   score DOUBLE PRECISION,
   is_healthy BOOLEAN,
   score_delta DOUBLE PRECISION,
-  network TEXT NOT NULL DEFAULT 'testnet',
+  network TEXT NOT NULL DEFAULT 'mainnet',
   status TEXT NOT NULL DEFAULT 'pending',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
