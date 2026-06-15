@@ -35,7 +35,7 @@ const systemHealth = `${score.toFixed(1)}%`;
   return (
     <AppLayout>
       {/* Header */}
-      <div id="dashboard" className="-mt-5 p-4 rounded-lg">
+      <div id="dashboard" className="rounded-lg p-4 md:-mt-5">
         <h1 className="text-3xl font-bold mb-1">Dashboard</h1>
         <p className="text-sm text-base-content/60 text-gray-400">
           System overview and activity monitoring
@@ -43,7 +43,7 @@ const systemHealth = `${score.toFixed(1)}%`;
       </div>
 
       {/* Top metrics (example wiring to real values) */}
-      <div className="grid gap-4 md:grid-cols-5 xl:grid-cols-5 mb-6">
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <Card
           label="Total Agents"
           value={Totalagent}
@@ -75,8 +75,7 @@ const systemHealth = `${score.toFixed(1)}%`;
         <HederaStatusPanel status={hederaStatus} />
       </div>
 
-      <div className="grid gap-8 grid-cols-3">
-        {/* Security Status card */}
+      <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
         <SecurityCheck
         score={score}
          riskLabel={riskLabel}
@@ -85,8 +84,7 @@ const systemHealth = `${score.toFixed(1)}%`;
           systemHealth={systemHealth}
 />    
 
-        {/* Trends chart card */}
-        <div className="card bg-[#0f0f0f] border border-[#514c4c] col-span-2">
+        <div className="card border border-[#514c4c] bg-[#0f0f0f] xl:col-span-2">
           <div className="card-body">
             <div className="flex ml-4 mt-4">
               <h2 className="card-title">

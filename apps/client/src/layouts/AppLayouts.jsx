@@ -1,27 +1,26 @@
 import Sidebar from "../components/layouts/SideBar";
 import Topbar from "../components/layouts/Topbar";
+import MobileNav from "../components/layouts/MobileNav";
 
 
 function AppLayout({ children }) {
   return (
-    <div className="min-h-screen bg-base-300 text-base-content flex">
-      {/* Sidebar */}
-      <aside className="w-60 bg-base-200 border-r border-[#242323] hidden md:flex">
+    <div className="flex min-h-screen bg-base-300 text-base-content">
+      <aside className="hidden w-60 shrink-0 border-r border-[#242323] bg-base-200 md:flex">
         <Sidebar />
       </aside>
 
-      {/* Main area */}
-      <div className="flex-1 flex flex-col">
-        {/* Topbar */}
-        <header className="h-16 border-b border-[#242323] flex items-center">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-30 flex h-16 items-center border-b border-[#242323]">
           <Topbar />
         </header>
 
-        {/* Content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto px-4 py-5 pb-24 md:p-6">
           {children}
         </main>
       </div>
+
+      <MobileNav />
     </div>
   );
 }

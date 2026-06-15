@@ -4,8 +4,7 @@ import logo from "../../assets/Agentity-logo.png"
 import SideIcon from "./SideIcon";
 function Sidebar() {
   return (
-    <div className="flex-1 h-300 w-60 fixed flex flex-col  bg-[#0f0f0f]">
-      {/* Logo */}
+    <div className="sticky top-0 flex h-screen w-60 flex-col bg-[#0f0f0f]">
       <Link to={"/"} >
       <div className="h-16 flex items-center px-4 gap-2 border-b border-[#242323]">
         <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
@@ -16,8 +15,7 @@ function Sidebar() {
         <span className="font-semibold text-lg">Agentity</span>
       </div>
 </Link>
-      {/* Nav items */}
-      <nav className="flex-1 py-4 space-y-1">
+      <nav className="flex-1 space-y-1 overflow-y-auto py-4">
         {navItems.map((item) => (
           <NavLink
             key={item.label}
