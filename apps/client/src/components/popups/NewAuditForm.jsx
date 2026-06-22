@@ -50,7 +50,7 @@ contract RiskyVault {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-4 rounded-2xl border border-white/10 bg-[#0f0f0f] p-6 text-sm text-gray-200"
+      className="space-y-4 rounded-2xl border border-white/10 bg-[#0f0f0f] p-4 text-sm text-gray-200 sm:p-6"
     >
       <h2 className="mb-2 text-lg font-semibold text-white">
         New Smart Contract Audit
@@ -94,8 +94,8 @@ contract RiskyVault {
             Source code (Solidity)
           </label>
           <textarea
-            className="textarea textarea-bordered w-full border-white/10 bg-black/40 text-xs font-mono text-gray-100 placeholder:text-gray-500 focus:border-indigo-500 focus:outline-none"
-            rows={6}
+          className="textarea textarea-bordered max-h-72 w-full border-white/10 bg-black/40 text-xs font-mono text-gray-100 placeholder:text-gray-500 focus:border-indigo-500 focus:outline-none"
+          rows={8}
             value={form.sourceCode}
             onChange={handleChange("sourceCode")}
             placeholder="contract Vault { function withdraw() external {} }"
@@ -120,7 +120,7 @@ contract RiskyVault {
       <div className="mt-4 flex justify-end gap-2">
         {loading?<Loading/>:<button
           type="submit"
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-500"
+          className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-500 sm:w-auto"
         >
           Start Audit
         </button>}

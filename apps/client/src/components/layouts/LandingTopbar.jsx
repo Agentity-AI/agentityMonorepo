@@ -13,9 +13,9 @@ const {dashBoard}=authentication();
     if (dashBoard)   navigate("/dashboard")
   }
     return (
-    <div className="flex items-center justify-between w-full border-b border-[#514c4c] fixed
+    <div className="fixed top-0 z-50 flex w-full items-center justify-between border-b border-[#514c4c]
     bg-[#0f0f0f] 
-     top-0">
+     ">
         {/* Left side (optional breadcrumb / page title placeholder) */}
         <div className="h-16 bg-[#0f0f0f0] flex items-center px-4 gap-2 border-none ">
         <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
@@ -29,11 +29,11 @@ const {dashBoard}=authentication();
         {loading ? (
           <Loading />
         ) : dashboardData ? (
-          <button className="mr-6 flex cursor-pointer items-center gap-4" onClick={toDashboard}>
-            <User size={42} color="white" />
+          <button className="mr-3 flex cursor-pointer items-center gap-4 sm:mr-6" onClick={toDashboard}>
+            <User className="h-9 w-9 text-white sm:h-10 sm:w-10" />
           </button>
         ) : (
-          <div className="mr-6 flex items-center gap-3">
+          <div className="mr-3 flex items-center gap-2 sm:mr-6 sm:gap-3">
             <Login />
             <SignUp />
           </div>

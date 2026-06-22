@@ -9,13 +9,13 @@ function Documentation() {
   return (
     <AppLayout>
     <div>
-         <div id="document" className="-mt-5 p-4 rounded-lg">
-        <h1 className="text-3xl font-bold mb-1">SDK & Documentation</h1>
+         <div id="document" className="rounded-lg p-3 sm:p-4 md:-mt-5">
+        <h1 className="mb-1 text-2xl font-bold sm:text-3xl">SDK & Documentation</h1>
         <p className="text-sm text-base-content/60 text-gray-400">
           Integration guides and API reference for the Agentity backend.
         </p>
       </div>
-      <div className="grid gap-4 p-4 md:grid-cols-2">
+      <div className="grid gap-4 p-3 sm:p-4 md:grid-cols-2">
         <a
           className="rounded-lg border border-[#514c4c] bg-[#0f0f0f] p-4 hover:border-[#14f195]/70"
           href={`${apiBaseUrl.replace(/\/+$/, "")}/docs`}

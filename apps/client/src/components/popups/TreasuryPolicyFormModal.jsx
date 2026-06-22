@@ -108,11 +108,11 @@ function TreasuryPolicyFormModal({ isOpen, onClose }) {
 
   return (
     <div
-      className="absolute inset-0 z-50 flex items-start justify-center bg-black/60 pt-16"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 px-3 py-4 sm:px-6 sm:py-8"
       onClick={handleBackdropClick}
     >
       <div
-        className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#0f0f0f] p-6 shadow-2xl"
+        className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#0f0f0f] p-4 shadow-2xl sm:p-6"
       >
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
@@ -264,7 +264,7 @@ function TreasuryPolicyFormModal({ isOpen, onClose }) {
               </label>
             </div>
 
-            <div className="mt-2 flex items-center justify-between gap-3">
+            <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <label className="flex items-center gap-2 text-xs text-gray-300">
                 <input
                   type="checkbox"
@@ -276,7 +276,7 @@ function TreasuryPolicyFormModal({ isOpen, onClose }) {
                 <span>Policy enabled</span>
               </label>
 
-              <div className="form-control w-40">
+              <div className="form-control w-full sm:w-40">
                 <label className="mb-1 block text-xs text-gray-400">
                   Status
                 </label>
@@ -332,7 +332,7 @@ function TreasuryPolicyFormModal({ isOpen, onClose }) {
           </section>
 
           {/* Actions */}
-          <div className="mt-4 flex justify-end gap-2">
+          <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <button
               type="button"
               className="rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-xs font-medium text-gray-200 hover:bg-white/10"

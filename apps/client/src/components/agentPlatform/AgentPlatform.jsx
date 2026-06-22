@@ -9,7 +9,7 @@ function AgentPlatform() {
       <p className="text-center text-lg mt-4 text-[#f3eded]">
        Everything you need to build, test, and deploy secure AI agents</p>
         </div>
-      <div className="grid w-[80%] mx-auto grid-cols-1 md:grid-cols-3 gap-6 mt-10 px-4">
+      <div className="mx-auto mt-10 grid w-full max-w-5xl grid-cols-1 gap-6 px-4 sm:grid-cols-2 lg:grid-cols-3">
 {landingPageAgentData.map((item, index) => (
     <LandingPageAgentCard key={index} id={item.id} title={item.name} description={item.description}/>
 ))}

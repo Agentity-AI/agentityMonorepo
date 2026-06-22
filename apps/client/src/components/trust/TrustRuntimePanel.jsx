@@ -15,7 +15,7 @@ function TrustRuntimePanel({ status }) {
 
   return (
     <section className="rounded-lg border border-[#21473a] bg-[#07110d] p-4">
-      <div className="mb-4 flex items-start justify-between gap-3">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-white">Trust Runtime</h2>
           <p className="text-sm text-gray-400">

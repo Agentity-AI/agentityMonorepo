@@ -35,8 +35,8 @@ const systemHealth = `${score.toFixed(1)}%`;
   return (
     <AppLayout>
       {/* Header */}
-      <div id="dashboard" className="rounded-lg p-4 md:-mt-5">
-        <h1 className="text-3xl font-bold mb-1">Dashboard</h1>
+      <div id="dashboard" className="rounded-lg p-3 sm:p-4 md:-mt-5">
+        <h1 className="mb-1 text-2xl font-bold sm:text-3xl">Dashboard</h1>
         <p className="text-sm text-base-content/60 text-gray-400">
           System overview and activity monitoring
         </p>
@@ -84,9 +84,9 @@ const systemHealth = `${score.toFixed(1)}%`;
           systemHealth={systemHealth}
 />    
 
-        <div className="card border border-[#514c4c] bg-[#0f0f0f] xl:col-span-2">
+        <div className="card rounded-lg border border-[#514c4c] bg-[#0f0f0f] xl:col-span-2">
           <div className="card-body">
-            <div className="flex ml-4 mt-4">
+            <div className="mt-4 flex sm:ml-4">
               <h2 className="card-title">
                 Verification &amp; Vulnerability Trends
               </h2>

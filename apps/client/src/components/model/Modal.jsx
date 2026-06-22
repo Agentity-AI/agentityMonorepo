@@ -3,12 +3,12 @@ function Modal({ open, onClose, children }) {
 
   return (
     <div
-      className="absolute inset-0 z-1 flex justify-center -mb-60 bg-[#0f0f0f]/60 "
-      onClick={onClose}           // close when clicking backdrop
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#0f0f0f]/70 px-3 py-4 sm:px-6 sm:py-8"
+      onClick={onClose}
     >
       <div
-        className="bg-base-200  rounded-xl shadow-2xl w-full h-full max-w-[40rem] p-6 "
-        onClick={(e) => e.stopPropagation()}  // prevent closing when clicking inside
+        className="w-full max-w-2xl rounded-xl bg-base-200 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
       >
         {children}
       </div>

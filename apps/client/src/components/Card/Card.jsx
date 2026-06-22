@@ -25,13 +25,13 @@ const [shadowStyle, setShadowStyle] = useState("");
   return (
    <div
             key={label}
-            className={`card bg-[#0f0f0f]  rounded-[10%] ${shadowStyle ? shadowStyle : ''}`}
+            className={`card rounded-lg bg-[#0f0f0f] ${shadowStyle ? shadowStyle : ''}`}
          onMouseOver={addTextShadow}
           onMouseOut={() => setShadowStyle("")}
          >
             <div className="card-body py-4 px-4 ">
               <div className="flex justify-between items-center">
-              <p className="text-[12px] w-1/2 uppercase  tracking-wide text-base-content/60">
+              <p className="text-[12px] uppercase tracking-wide text-base-content/60">
                 {label}
               </p>
               <div className="w-10 h-10 border border-[#4d4dc4]  bg-[#4d4dc4]/30 p-2 rounded-full flex items-center justify-center">

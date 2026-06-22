@@ -2,9 +2,9 @@ import SignUp from "../signUp/SignUp"
 
 function GetStarted() {
   return (
-   <div className="flex flex-col items-center justify-center h-70 border-2 border-[#30035a]
-    bg-[#1a1024] text-white rounded-2xl p-10">
-    <h1 className="text-4xl font-bold mb-4">Ready To Get Started?</h1>
+   <div className="flex min-h-72 flex-col items-center justify-center rounded-2xl border-2 border-[#30035a]
+    bg-[#1a1024] p-6 text-center text-white sm:p-10">
+    <h1 className="mb-4 text-3xl font-bold sm:text-4xl">Ready To Get Started?</h1>
     <p className="text-lg mb-8 text-center max-w-xl">
       Your all-in-one solution for AI agent verification, simulation,
        payment, execution, and auditing. Get started.</p>

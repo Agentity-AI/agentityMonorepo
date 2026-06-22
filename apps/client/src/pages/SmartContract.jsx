@@ -30,16 +30,16 @@ function SmartContract() {
 
   return (
     <AppLayout>
-  <div className="mb-6 p-4 rounded-lg flex items-center justify-between">
+  <div className="mb-6 flex flex-col gap-4 rounded-lg p-3 sm:flex-row sm:items-center sm:justify-between sm:p-4">
         <div>
-          <h1 className="text-3xl font-bold mb-1">Smart Contracts Audits</h1>
+          <h1 className="mb-1 text-2xl font-bold sm:text-3xl">Smart Contracts Audits</h1>
           <p className="text-sm text-base-content/60 text-white">
             Automated security analysis for smart contracts
           </p>
         </div>
 
         <button
-          className="bg-[#06b0ff] btn-sm mt-4 flex px-4 py-2 rounded-lg border-none text-white:hover:bg-[#06b0ff]/90"
+          className="btn-sm flex w-full items-center justify-center rounded-lg border-none bg-[#06b0ff] px-4 py-2 text-white hover:bg-[#06b0ff]/90 sm:w-auto"
           onClick={() => setOpen(true)}
         >
           <Plus className=" mr-2" size={30} />
@@ -48,8 +48,8 @@ function SmartContract() {
       </div>
 
       <div className="border-[#514c4c] bg-[#0f0f0f] rounded-lg border">
-        <div className="items-center gap-4 p-4 border-b border-[#514c4c]">
-          <div className="flex relative left-4">
+        <div className="items-center gap-4 border-b border-[#514c4c] p-4">
+          <div className="flex items-center gap-2">
             <Bot className="text-primary " size={24} />
             <h2 className="text-xl font-semibold">Contract Audits</h2>
             <span className="text-xl text-[#f5f8f9]">
@@ -57,8 +57,56 @@ function SmartContract() {
             </span>
           </div>
 
-          <div>
-            <table className="table-auto w-full mt-5  ">
+          <div className="mt-5 space-y-3 lg:hidden">
+            {audits?.length ? (
+              audits.map((audit) => (
+                <article
+                  key={audit.id}
+                  className="rounded-lg border border-[#514c4c] bg-black/20 p-4"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="truncate text-base font-semibold text-white">
+                        {audit.contractName}
+                      </h3>
+                      <p className="mt-1 text-xs capitalize text-gray-400">
+                        {audit.status}
+                      </p>
+                    </div>
+                    <span className="rounded-full border border-white/10 px-2 py-1 text-xs uppercase text-gray-300">
+                      {audit.riskLevel}
+                    </span>
+                  </div>
+                  <div className="mt-4 grid gap-3 text-sm text-gray-300 sm:grid-cols-2">
+                    <div>
+                      <p className="text-xs text-gray-500">Consensus score</p>
+                      <p className="mt-1 font-semibold text-white">
+                        {audit.consensusScore}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Risk level</p>
+                      <p className="mt-1 capitalize text-white">{audit.riskLevel}</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline mt-4 w-full sm:w-auto"
+                    onClick={() => handleViewAudit(audit.id)}
+                  >
+                    View details
+                  </button>
+                </article>
+              ))
+            ) : (
+              <div className="rounded-lg border border-white/10 bg-black/20 p-4 text-sm text-gray-400">
+                No smart contract audits yet.
+              </div>
+            )}
+          </div>
+
+          <div className="hidden overflow-x-auto lg:block">
+            <table className="mt-5 w-full min-w-[720px] table-auto">
               <thead className="relative left-4 grid">
                 <tr className=" py-2 h-10 w-full grid grid-cols-5 hover:bg-[#2f2f2f]">
                   <td className="text-left text-sm text-base-content/60">
@@ -96,7 +144,7 @@ function SmartContract() {
 
       <Modal open={detailsOpen} onClose={() => setDetailsOpen(false)}>
         {auditDetails && (
-          <div className="space-y-5 rounded-2xl border border-white/10 bg-[#0f0f0f] p-6 text-sm text-gray-200">
+          <div className="space-y-5 rounded-2xl border border-white/10 bg-[#0f0f0f] p-4 text-sm text-gray-200 sm:p-6">
             <div>
               <h2 className="text-xl font-semibold text-white">
                 {auditDetails.contractName}
@@ -104,7 +152,7 @@ function SmartContract() {
               <p className="mt-1 text-gray-400">{auditDetails.summary}</p>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="rounded-lg border border-white/10 bg-black/30 p-3">
                 <p className="text-xs text-gray-400">Risk</p>
                 <p className="text-lg font-semibold capitalize">{auditDetails.riskLevel}</p>

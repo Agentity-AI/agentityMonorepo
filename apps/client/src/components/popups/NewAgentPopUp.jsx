@@ -77,7 +77,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
   }
 
   return (
-    <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#0f0f0f] p-6 shadow-2xl text-sm text-gray-200">
+    <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#0f0f0f] p-4 text-sm text-gray-200 shadow-2xl sm:p-6">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <div>
@@ -95,7 +95,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
         {/* Identity section */}
         <section className="rounded-xl border border-white/10 bg-white/5 p-4">
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
@@ -210,7 +210,7 @@ function NewAgentPopUp({ onClose, onSubmit }) {
         </section>
 
         {/* Actions */}
-        <div className="mt-4 flex justify-end gap-2">
+        <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <button
             type="button"
             className="rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-xs font-medium text-gray-200 hover:bg-white/10"

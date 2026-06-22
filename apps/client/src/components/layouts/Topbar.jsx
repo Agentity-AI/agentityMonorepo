@@ -18,12 +18,12 @@ function Topbar() {
   }
 
   return (
-    <div className="flex h-16 w-full items-center justify-between border-b border-[#0f0f0f] bg-[#0f0f0f] px-3">
+    <div className="flex h-16 w-full items-center justify-end border-b border-[#0f0f0f] bg-[#0f0f0f] px-2 sm:px-3">
       <div className="hidden text-sm md:block text-base-content/60">
       </div>
 
-      <div className="flex min-w-0 items-center gap-2 md:gap-4">
-        <div className="flex max-w-[11rem] items-center gap-2 rounded-full border border-[#0cf33a] bg-[#19291c] px-3 py-2 text-[#0cf33a] md:max-w-none">
+      <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 md:gap-4">
+        <div className="flex max-w-[9.5rem] items-center gap-2 rounded-full border border-[#0cf33a] bg-[#19291c] px-2 py-2 text-[#0cf33a] sm:max-w-[13rem] sm:px-3 md:max-w-none">
           <div className="relative flex items-center justify-center">
             <div className="absolute inline-flex h-4 w-4 rounded-full bg-[#0cf33a] opacity-75 animate-ping" />
             <div className="h-4 w-4 rounded-full bg-[#0cf33a]" />
@@ -36,12 +36,12 @@ function Topbar() {
         <Link
           to="/alerts"
           aria-label="Open alerts"
-          className="btn btn-ghost btn-circle bg-transparent text-base-content/60"
+          className="btn btn-ghost btn-circle h-9 min-h-0 w-9 bg-transparent text-base-content/60"
         >
-          <Mail className="m-3 bg-transparent text-base-content/60" />
+          <Mail className="h-5 w-5 bg-transparent text-base-content/60" />
         </Link>
 
-        <button className="btn btn-ghost h-9 min-h-0 max-w-[9rem] rounded-full border border-base-300 px-3 md:max-w-xs">
+        <button className="btn btn-ghost hidden h-9 min-h-0 max-w-[9rem] rounded-full border border-base-300 px-3 sm:flex md:max-w-xs">
           <span className="truncate text-xs font-mono">
             {user?.email || "Agentity user"}
           </span>
@@ -52,9 +52,9 @@ function Topbar() {
         <button
           onClick={handleLogout}
           aria-label="Log out"
-          className="btn btn-ghost btn-circle bg-transparent text-base-content/60"
+          className="btn btn-ghost btn-circle h-9 min-h-0 w-9 bg-transparent text-base-content/60"
         >
-          <LogOut size={20} className="m-3 bg-transparent text-base-content/60" />
+          <LogOut size={20} className="bg-transparent text-base-content/60" />
         </button>
       }
       </div>
