@@ -119,7 +119,13 @@ async function main() {
 
   const health = await runner.step("Health check", "GET", "/health");
   const system = await runner.step("System status", "GET", "/system/status");
-  await runner.step("Hedera runtime status", "GET", "/hedera/status");
+  const hederaStatus = await runner.step("Hedera runtime status", "GET", "/hedera/status");
+
+  if (hederaStatus.configErrors?.length) {
+    throw new Error(
+      `Hedera runtime config is degraded: ${hederaStatus.configErrors.join("; ")}`,
+    );
+  }
 
   if (health.status !== "healthy") {
     throw new Error("Health endpoint did not return healthy status");
@@ -178,6 +184,14 @@ async function main() {
     `/agents/${agent.id}/verify`,
     walletDetails,
   );
+
+  if (verification.hederaSyncStatus === "failed") {
+    throw new Error(
+      `Trust proof sync failed during verification: ${
+        verification.hedera?.error || "unknown error"
+      }`,
+    );
+  }
 
   await runner.step("Fetch Hedera proof history", "GET", `/agents/${agent.id}/hedera-history`);
   await runner.step("List my agents", "GET", "/agents/my");
