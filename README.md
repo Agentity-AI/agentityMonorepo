@@ -98,7 +98,7 @@ HEDERA_OPERATOR_PRIVATE_KEY=
 HEDERA_OPERATOR_KEY_PATH=
 HEDERA_CONSENSUS_TOPIC_ID=
 HEDERA_DEFAULT_TOKEN_ID=
-HEDERA_ENABLE_REAL_PROOFS=true
+HEDERA_ENABLE_REAL_PROOFS=false
 HEDERA_ENABLE_REAL_TRANSFERS=false
 ```
 
@@ -242,6 +242,22 @@ See [TESTING_GUIDE.md](docs/TESTING_GUIDE.md) for real-life testing scenarios su
 
 If operator credentials or an HCS topic are not configured, the backend still completes local flows using simulated Hedera proof records. This keeps demos, development, and automated testing safe.
 
+Mainnet demo mode, recommended until a backend operator key is available:
+
+```bash
+HEDERA_NETWORK=mainnet
+HEDERA_MIRROR_NODE_URL=https://mainnet-public.mirrornode.hedera.com
+HEDERA_OPERATOR_ACCOUNT_ID=
+HEDERA_OPERATOR_PRIVATE_KEY=
+HEDERA_OPERATOR_KEY_PATH=
+HEDERA_CONSENSUS_TOPIC_ID=
+HEDERA_DEFAULT_TOKEN_ID=
+HEDERA_ENABLE_REAL_PROOFS=false
+HEDERA_ENABLE_REAL_TRANSFERS=false
+```
+
+In this mode, `/hedera/status` should show `network: "mainnet"`, `status: "ready"`, `realProofsEnabled: false`, `realPaymentsEnabled: false`, `operatorConfigured: false`, `proofMode: "local-hash"`, and an empty `configErrors` array. The backend smoke flow should pass with simulated proof, payment, and KMS outputs. This is the safest investor-demo posture because the product workflows are testable without exposing a server private key or moving funds.
+
 Live proofs require:
 
 ```bash
@@ -274,7 +290,7 @@ HEDERA_ENABLE_REAL_TRANSFERS=true
 
 Keep real transfers disabled until the operator account, limits, policies, and mainnet funding are reviewed.
 
-After setting mainnet values:
+After setting either mainnet demo values or live mainnet values:
 
 ```bash
 npm run db:migrate:hedera
@@ -283,7 +299,9 @@ curl http://localhost:5000/hedera/status
 npm run smoke
 ```
 
-`/hedera/status` should show `network: "mainnet"`, `operatorConfigured: true`, `operatorCanSubmit: true`, `proofMode: "hcs-topic"`, and your `consensusTopicId`. The smoke output should stop reporting simulated proof sync once operator credentials and topic ID are valid.
+For mainnet demo mode, `/hedera/status` should show `network: "mainnet"`, `status: "ready"`, `realProofsEnabled: false`, `operatorConfigured: false`, and `proofMode: "local-hash"`. The smoke output should report simulated proof/payment behavior and complete successfully.
+
+For live proof mode, `/hedera/status` should show `network: "mainnet"`, `operatorConfigured: true`, `operatorCanSubmit: true`, `proofMode: "hcs-topic"`, and your `consensusTopicId`. The smoke output should stop reporting simulated proof sync once operator credentials and topic ID are valid.
 
 ## Security Notes
 

@@ -7,6 +7,8 @@ const HEDERA_OPERATOR_CONFIGURED = Boolean(
       process.env.HEDERA_OPERATOR_KEY ||
       process.env.HEDERA_OPERATOR_KEY_PATH),
 );
+const REAL_PROOFS_ENABLED = process.env.HEDERA_ENABLE_REAL_PROOFS !== "false";
+const REAL_TRANSFERS_ENABLED = process.env.HEDERA_ENABLE_REAL_TRANSFERS === "true";
 const SMOKE_ACCOUNT_CONFIGURED = Boolean(process.env.SMOKE_HEDERA_ACCOUNT_ID);
 
 function createRunner() {
@@ -108,6 +110,9 @@ async function main() {
     JSON.stringify(
       {
         baseUrl: BASE_URL,
+        hederaNetwork: process.env.HEDERA_NETWORK || "mainnet",
+        realProofsEnabled: REAL_PROOFS_ENABLED,
+        realTransfersEnabled: REAL_TRANSFERS_ENABLED,
         hederaOperatorConfigured: HEDERA_OPERATOR_CONFIGURED,
         smokeAccountConfigured: SMOKE_ACCOUNT_CONFIGURED,
         kmsConfigured: Boolean(process.env.AWS_REGION && process.env.AWS_KMS_KEY_ID),
@@ -269,7 +274,11 @@ async function main() {
     ),
   );
 
-  if (!HEDERA_OPERATOR_CONFIGURED) {
+  if (!REAL_PROOFS_ENABLED) {
+    console.log(
+      "\n[SMOKE] Mainnet simulated mode is active: app workflows are tested against mainnet configuration, while Trust Runtime proofs and payments remain local/simulated.",
+    );
+  } else if (!HEDERA_OPERATOR_CONFIGURED) {
     console.log(
       "\n[SMOKE] Live Hedera proofs require HEDERA_OPERATOR_ACCOUNT_ID, HEDERA_OPERATOR_PRIVATE_KEY, and HEDERA_CONSENSUS_TOPIC_ID. Real payments additionally require HEDERA_ENABLE_REAL_TRANSFERS=true and a funded operator account.",
     );

@@ -79,6 +79,18 @@ function parsePrivateKey(rawKey) {
   const value = rawKey.trim();
   if (!value) return null;
 
+  if (/^0x[0-9a-fA-F]{40}$/.test(value)) {
+    throw new Error(
+      "Invalid Trust Runtime private key format: value looks like an EVM address. Use the account private key, not the public/EVM address.",
+    );
+  }
+
+  if (value.split(/\s+/).length > 1) {
+    throw new Error(
+      "Invalid Trust Runtime private key format: value looks like a recovery phrase or spaced export. Use the raw private key only.",
+    );
+  }
+
   try {
     return PrivateKey.fromString(value);
   } catch (error) {
