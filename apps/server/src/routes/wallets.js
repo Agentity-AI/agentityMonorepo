@@ -19,7 +19,7 @@ const { getHederaNetwork } = require("../config/hedera");
  * @openapi
  * tags:
  *   - name: Wallets
- *     description: Hedera account linkage for agents
+ *     description: Trust account linkage for agents
  */
 
 /**
@@ -27,7 +27,7 @@ const { getHederaNetwork } = require("../config/hedera");
  * /wallets/link:
  *   post:
  *     tags: [Wallets]
- *     summary: Link a Hedera account to an authenticated user's agent
+ *     summary: Link a trust account to an authenticated user's agent
  *     security:
  *       - bearerAuth: []
  *       - cookieAuth: []
@@ -49,12 +49,12 @@ const { getHederaNetwork } = require("../config/hedera");
  *                 description: Optional public key override. Defaults to `hederaAccountId`.
  *               network:
  *                 type: string
- *                 example: "testnet"
+ *                 example: "mainnet"
  *               kmsKeyId:
  *                 type: string
  *     responses:
  *       200:
- *         description: Linked Hedera account
+ *         description: Linked trust account
  *       400:
  *         description: Invalid input
  *       401:
@@ -62,7 +62,7 @@ const { getHederaNetwork } = require("../config/hedera");
  *       404:
  *         description: Agent not found
  *       409:
- *         description: Hedera account already linked to another user's agent
+ *         description: Trust account already linked to another user's agent
  */
 router.post("/link", requireAuth, async (req, res, next) => {
   try {
@@ -120,7 +120,7 @@ router.post("/link", requireAuth, async (req, res, next) => {
       existingWalletForAccount.agent.creator_id !== req.user.id
     ) {
       return res.status(409).json({
-        message: "This Hedera account is already linked to another user's agent",
+        message: "This trust account is already linked to another user's agent",
       });
     }
 
@@ -178,10 +178,10 @@ router.post("/link", requireAuth, async (req, res, next) => {
       agentId: agent.id,
       sourceId: wallet.id,
       sourceType: "agent_wallet",
-      title: "Hedera wallet linked",
+      title: "Trust account linked",
       severity: "low",
       type: "wallet_linked",
-      message: `${agent.agent_name} is linked to Hedera account ${wallet.hedera_account_id}.`,
+      message: `${agent.agent_name} is linked to trust account ${wallet.hedera_account_id}.`,
       metadata: {
         hederaAccountId: wallet.hedera_account_id,
         network: wallet.network,
@@ -208,7 +208,7 @@ router.post("/link", requireAuth, async (req, res, next) => {
     if (error?.name === "SequelizeUniqueConstraintError") {
       return res.status(409).json({
         message:
-          "Wallet link conflict detected. This Hedera account may already be linked.",
+          "Wallet link conflict detected. This trust account may already be linked.",
       });
     }
 

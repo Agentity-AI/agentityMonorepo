@@ -11,7 +11,7 @@ const {
  * @openapi
  * tags:
  *   - name: Payments
- *     description: Hedera payment pricing and transaction history
+ *     description: Payment pricing and transaction history
  */
 
 /**
@@ -19,7 +19,7 @@ const {
  * /payments/pricing:
  *   get:
  *     tags: [Payments]
- *     summary: Preview Hedera task pricing
+ *     summary: Preview task pricing
  *     description: |
  *       Returns the default quote amount for a task type. The task payment endpoint
  *       creates the actual quote and settles it during `/tasks/{id}/pay`.
@@ -70,8 +70,8 @@ router.get("/pricing", (req, res) => {
  * /payments/history:
  *   get:
  *     tags: [Payments]
- *     summary: Get Hedera payment history for authenticated user
- *     description: Returns task payment records including HBAR/HTS amounts and Hedera transaction IDs.
+ *     summary: Get payment history for authenticated user
+ *     description: Returns task payment records including settlement amounts and transaction IDs.
  *     security:
  *       - bearerAuth: []
  *       - cookieAuth: []

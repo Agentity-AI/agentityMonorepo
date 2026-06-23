@@ -4,7 +4,9 @@ export const AUTH_TOKEN_STORAGE_KEY = "agentity_auth_token";
 
 const apiBaseUrl =
   import.meta.env.VITE_API_BASE_URL ||
-  "https://agentitymonorepo.onrender.com";
+  (import.meta.env.DEV
+    ? "http://localhost:5000"
+    : "https://agentitymonorepo.onrender.com");
 
 export function getAuthToken() {
   if (typeof window === "undefined") return null;

@@ -7,7 +7,7 @@ const options = {
       title: "Agentity AI Trust Platform API",
       version: "1.0.0",
       description:
-        "Agentity backend APIs for Hedera-backed AI agent identity, simulation, payment, execution, and audit proofs. Protected routes accept Supabase JWTs and the agentity_jwt cookie. Task endpoints also accept active agty_live integration API keys in the Bearer header.",
+        "Agentity backend APIs for AI agent identity, simulation, payment, execution, audit, and Trust Runtime proof records. Protected routes accept Supabase JWTs and the agentity_jwt cookie. Task endpoints also accept active agty_live integration API keys in the Bearer header.",
     },
     servers: [
       { url: "http://localhost:5000", description: "Local" },

@@ -164,7 +164,7 @@ async function executeHederaPayment(paymentRecord) {
   });
 
   if (!wallet) {
-    throw new Error("Agent Hedera account is not linked");
+    throw new Error("Agent trust account is not linked");
   }
 
   const { accountId: operatorAccountId, privateKey } =

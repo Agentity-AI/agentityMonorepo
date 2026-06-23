@@ -68,7 +68,7 @@ function readPrivateKeyPath() {
     return fs.readFileSync(privateKeyPath, "utf8");
   } catch (error) {
     throw new Error(
-      `Failed to read Hedera operator private key file at "${privateKeyPath}": ${error.message}`,
+      `Failed to read Trust Runtime operator private key file at "${privateKeyPath}": ${error.message}`,
     );
   }
 }
@@ -82,7 +82,7 @@ function parsePrivateKey(rawKey) {
   try {
     return PrivateKey.fromString(value);
   } catch (error) {
-    throw new Error(`Invalid Hedera private key format: ${error.message}`);
+    throw new Error(`Invalid Trust Runtime private key format: ${error.message}`);
   }
 }
 

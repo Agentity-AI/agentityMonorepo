@@ -144,7 +144,7 @@ function requireHederaAccountId(value, fieldName = "hederaAccountId") {
 
   if (!accountIdPattern.test(normalized)) {
     throw new ValidationError(
-      `${fieldName} must be a valid Hedera account ID or EVM address`,
+      `${fieldName} must be a valid trust account ID or EVM address`,
     );
   }
 

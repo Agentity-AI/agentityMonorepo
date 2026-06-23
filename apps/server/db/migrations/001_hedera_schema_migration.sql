@@ -89,7 +89,10 @@ END $$;
 
 UPDATE public.agent_wallets
 SET
-  network = COALESCE(network, 'mainnet'),
+  network = CASE
+    WHEN network IS NULL OR network IN ('devnet', 'testnet') THEN 'mainnet'
+    ELSE network
+  END,
   wallet_type = COALESCE(wallet_type, 'agent'),
   status = COALESCE(status, 'linked'),
   created_at = COALESCE(created_at, now()),
@@ -98,6 +101,7 @@ SET
 ALTER TABLE public.agent_wallets
   ALTER COLUMN hedera_account_id SET NOT NULL,
   ALTER COLUMN hedera_public_key SET NOT NULL,
+  ALTER COLUMN network SET DEFAULT 'mainnet',
   ALTER COLUMN network SET NOT NULL,
   ALTER COLUMN wallet_type SET NOT NULL,
   ALTER COLUMN status SET NOT NULL,
@@ -138,6 +142,14 @@ CREATE INDEX IF NOT EXISTS idx_agent_hedera_registry_status
 CREATE INDEX IF NOT EXISTS idx_agent_hedera_registry_network
   ON public.agent_hedera_registry(network);
 
+UPDATE public.agent_hedera_registry
+SET network = 'mainnet'
+WHERE network IS NULL OR network IN ('devnet', 'testnet');
+
+ALTER TABLE public.agent_hedera_registry
+  ALTER COLUMN network SET DEFAULT 'mainnet',
+  ALTER COLUMN network SET NOT NULL;
+
 CREATE TABLE IF NOT EXISTS public.agent_hedera_proofs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   agent_id UUID NOT NULL REFERENCES public."Agents"(id) ON DELETE CASCADE,
@@ -166,6 +178,14 @@ CREATE INDEX IF NOT EXISTS idx_agent_hedera_proofs_proof_hash
   ON public.agent_hedera_proofs(proof_hash);
 CREATE INDEX IF NOT EXISTS idx_agent_hedera_proofs_created_at
   ON public.agent_hedera_proofs(created_at);
+
+UPDATE public.agent_hedera_proofs
+SET network = 'mainnet'
+WHERE network IS NULL OR network IN ('devnet', 'testnet');
+
+ALTER TABLE public.agent_hedera_proofs
+  ALTER COLUMN network SET DEFAULT 'mainnet',
+  ALTER COLUMN network SET NOT NULL;
 
 CREATE TABLE IF NOT EXISTS public.payment_records (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -265,14 +285,22 @@ END $$;
 
 UPDATE public.payment_records
 SET
-  currency = COALESCE(currency, 'HBAR'),
-  token_decimals = COALESCE(token_decimals, 8),
+  currency = CASE
+    WHEN currency IS NULL OR currency IN ('SOL', 'LAMPORTS') THEN 'HBAR'
+    ELSE currency
+  END,
+  token_decimals = CASE
+    WHEN token_decimals IS NULL OR token_decimals = 9 THEN 8
+    ELSE token_decimals
+  END,
   status = COALESCE(status, 'quoted'),
   created_at = COALESCE(created_at, now()),
   updated_at = COALESCE(updated_at, now());
 
 ALTER TABLE public.payment_records
+  ALTER COLUMN currency SET DEFAULT 'HBAR',
   ALTER COLUMN currency SET NOT NULL,
+  ALTER COLUMN token_decimals SET DEFAULT 8,
   ALTER COLUMN token_decimals SET NOT NULL,
   ALTER COLUMN status SET NOT NULL,
   ALTER COLUMN created_at SET NOT NULL,

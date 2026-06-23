@@ -15,23 +15,23 @@ const { ValidationError, requireString } = require("../utils/validation");
 /**
  * @openapi
  * tags:
- *   - name: Hedera
- *     description: Hedera network status and proof inspection
+ *   - name: Trust Runtime
+ *     description: Trust Runtime status and proof inspection
  */
 
 /**
  * @openapi
  * /hedera/status:
  *   get:
- *     tags: [Hedera]
- *     summary: Get Hedera runtime status
+ *     tags: [Trust Runtime]
+ *     summary: Get Trust Runtime status
  *     description: |
  *       Returns operator, mirror node, HCS topic, proof mode, and payment mode configuration.
  *       The endpoint never requires live credentials for local testing; missing credentials are
  *       reported as simulated proof/payment mode instead of crashing the API.
  *     responses:
  *       200:
- *         description: Hedera runtime configuration
+ *         description: Trust Runtime configuration
  */
 router.get("/status", (req, res) => {
   return res.json(buildHederaRuntimeStatus());
@@ -63,15 +63,15 @@ async function fetchMirrorTransaction(transactionId) {
  * @openapi
  * /hedera/transactions/{transactionId}:
  *   get:
- *     tags: [Hedera]
- *     summary: Inspect a Hedera transaction and local Agentity proof
+ *     tags: [Trust Runtime]
+ *     summary: Inspect a Trust Runtime transaction and local Agentity proof
  *     parameters:
  *       - in: path
  *         name: transactionId
  *         required: true
  *         schema:
  *           type: string
- *         description: Hedera transaction ID, for example `0.0.1234@1710000000.000000001`.
+ *         description: Trust Runtime transaction ID, for example `0.0.1234@1710000000.000000001`.
  *     responses:
  *       200:
  *         description: Transaction and local proof details

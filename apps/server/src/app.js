@@ -14,11 +14,29 @@ app.locals.databaseStatus = {
   syncStatus: "skipped",
 };
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5173",
-  // "https://your-frontend-domain.com",
+function parseOrigins(value) {
+  return String(value || "")
+    .split(",")
+    .map((origin) => origin.trim().replace(/\/+$/, ""))
+    .filter(Boolean);
+}
+
+const configuredOrigins = [
+  ...parseOrigins(process.env.CORS_ORIGINS),
+  ...parseOrigins(process.env.CLIENT_URL),
+  ...parseOrigins(process.env.PUBLIC_CLIENT_URL),
+  ...parseOrigins(process.env.FRONTEND_URL),
 ];
+
+const localOrigins =
+  process.env.NODE_ENV === "production"
+    ? []
+    : ["http://localhost:3000", "http://localhost:5173"];
+
+const allowedOrigins = [...new Set([...configuredOrigins, ...localOrigins])];
+const allowUnconfiguredOrigins =
+  process.env.NODE_ENV !== "production" &&
+  process.env.CORS_ALLOW_UNCONFIGURED === "true";
 
 function lazyMiddleware(loadMiddleware) {
   let middleware;
@@ -45,17 +63,15 @@ app.use(
         return cb(null, true);
       }
 
-      // Allow explicitly trusted frontend origins.
       if (allowedOrigins.includes(origin)) {
         return cb(null, true);
       }
 
-      // Temporary fallback.
-      // Safer than using `origin: "*"`, but still permissive.
-      return cb(null, true);
+      if (allowUnconfiguredOrigins) {
+        return cb(null, true);
+      }
 
-      // Recommended production version:
-      // return cb(new Error("CORS origin not allowed"));
+      return cb(new Error("CORS origin not allowed"));
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],

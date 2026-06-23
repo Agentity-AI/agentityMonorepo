@@ -85,6 +85,7 @@ SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 SUPABASE_SERVICE_ROLE_KEY=YOUR_SUPABASE_SERVICE_ROLE_KEY
 PUBLIC_API_BASE_URL=http://localhost:5000
+CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 ```
 
 Hedera values:
@@ -250,13 +251,39 @@ HEDERA_CONSENSUS_TOPIC_ID=0.0.y
 HEDERA_ENABLE_REAL_PROOFS=true
 ```
 
+Recommended production setup:
+
+```bash
+HEDERA_NETWORK=mainnet
+HEDERA_MIRROR_NODE_URL=https://mainnet-public.mirrornode.hedera.com
+HEDERA_OPERATOR_ACCOUNT_ID=0.0.x
+HEDERA_OPERATOR_KEY_PATH=/run/secrets/hedera-operator-key
+HEDERA_CONSENSUS_TOPIC_ID=0.0.y
+HEDERA_DEFAULT_TOKEN_ID=
+HEDERA_ENABLE_REAL_PROOFS=true
+HEDERA_ENABLE_REAL_TRANSFERS=false
+```
+
+Use `HEDERA_OPERATOR_PRIVATE_KEY` only when your deployment platform stores it as a protected secret. If the platform supports secret files, prefer `HEDERA_OPERATOR_KEY_PATH`. `HEDERA_DEFAULT_TOKEN_ID` can stay blank for HBAR-only flows; set it only when enabling an HTS token.
+
 Live transfers additionally require:
 
 ```bash
 HEDERA_ENABLE_REAL_TRANSFERS=true
 ```
 
-Keep real transfers disabled until the operator account, limits, policies, and testnet funding are reviewed.
+Keep real transfers disabled until the operator account, limits, policies, and mainnet funding are reviewed.
+
+After setting mainnet values:
+
+```bash
+npm run db:migrate:hedera
+npm run start
+curl http://localhost:5000/hedera/status
+npm run smoke
+```
+
+`/hedera/status` should show `network: "mainnet"`, `operatorConfigured: true`, `operatorCanSubmit: true`, `proofMode: "hcs-topic"`, and your `consensusTopicId`. The smoke output should stop reporting simulated proof sync once operator credentials and topic ID are valid.
 
 ## Security Notes
 

@@ -222,7 +222,7 @@ function buildJavascriptSnippet({ baseUrl, agentId }) {
     taskType: "execution",
     inputPayload: {
       target: "swap",
-      network: "hedera-testnet",
+      network: "mainnet",
       settlementAsset: "HBAR"
     }
   })
@@ -245,7 +245,7 @@ export function AgentityActionButton() {
         agentId: "${agentId || "YOUR_AGENT_ID"}",
         publicClientKey: "${publicClientKey || "YOUR_PUBLIC_CLIENT_KEY"}",
         taskType: "execution",
-        inputPayload: { target: "agent-action", network: "hedera-testnet" }
+        inputPayload: { target: "agent-action", network: "mainnet" }
       });
     } finally {
       setLoading(false);
@@ -278,7 +278,7 @@ function buildCurlSnippet({ baseUrl, agentId }) {
     "taskType": "execution",
     "inputPayload": {
       "target": "swap",
-      "network": "hedera-testnet",
+      "network": "mainnet",
       "settlementAsset": "HBAR"
     }
   }'`;

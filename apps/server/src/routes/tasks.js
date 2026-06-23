@@ -35,7 +35,7 @@ const {
  * @openapi
  * tags:
  *   - name: Tasks
- *     description: Hedera-backed AI agent task coordination and execution lifecycle
+ *     description: Trust Runtime AI agent task coordination and execution lifecycle
  */
 
 /**
@@ -75,7 +75,7 @@ const {
  *                 additionalProperties: true
  *                 example:
  *                   target: "swap"
- *                   network: "hedera-testnet"
+ *                   network: "mainnet"
  *                   maxSlippageBps: 100
  *           examples:
  *             frontendTaskPayload:
@@ -85,7 +85,7 @@ const {
  *                 taskType: "execution"
  *                 inputPayload:
  *                   target: "swap"
- *                   network: "hedera-testnet"
+ *                   network: "mainnet"
  *                   maxSlippageBps: 100
  *     responses:
  *       201:
@@ -341,14 +341,14 @@ router.post("/:id/simulate", requireAuth, async (req, res, next) => {
  * /tasks/{id}/pay:
  *   post:
  *     tags: [Tasks]
- *     summary: Create and settle Hedera payment for a task
+ *     summary: Create and settle payment for a task
  *     description: |
  *       Creates a payment quote, attempts settlement, updates the task status,
  *       and writes a transaction record for downstream reporting.
  *
  *       Frontend testing note:
  *       - call this after simulation has completed
- *       - if Hedera real transfers are not enabled, the backend marks the flow as simulated
+ *       - if real transfers are not enabled, the backend marks the flow as simulated
  *       - payment failures can trigger alert creation
  *     security:
  *       - bearerAuth: []
@@ -563,14 +563,14 @@ router.post("/:id/pay", requireAuth, async (req, res, next) => {
  * /tasks/{id}/execute:
  *   post:
  *     tags: [Tasks]
- *     summary: Execute a paid task through Hedera trust workflow and optional KMS audit
+ *     summary: Execute a paid task through Trust Runtime workflow and optional KMS audit
  *     description: |
  *       Executes a task after simulation and payment.
  *       The backend:
  *       - loads the related simulation result
- *       - calls the Hedera trust workflow execution service
+ *       - calls the Trust Runtime execution service
  *       - signs the execution payload with KMS when a key is linked
- *       - writes a Hedera execution proof
+ *       - writes a Trust Runtime execution proof
  *       - stores a transaction record
  *       - raises a critical alert if execution fails
  *     security:
@@ -629,7 +629,7 @@ router.post("/:id/pay", requireAuth, async (req, res, next) => {
  *       404:
  *         description: Task or agent not found
  *       500:
- *         description: Hedera trust workflow execution or KMS signing failed
+ *         description: Trust Runtime execution or KMS signing failed
  */
 router.post("/:id/execute", requireAuth, async (req, res, next) => {
   try {
@@ -757,8 +757,8 @@ router.post("/:id/execute", requireAuth, async (req, res, next) => {
         severity: hederaProof.simulated ? "medium" : "low",
         type: "task_execution_completed",
         message: hederaProof.simulated
-          ? `Task ${task.id} executed with a simulated Hedera proof.`
-          : `Task ${task.id} executed with a Hedera proof.`,
+          ? `Task ${task.id} executed with a simulated trust proof.`
+          : `Task ${task.id} executed with a Trust Runtime proof.`,
         metadata: {
           taskId: task.id,
           hederaTransactionId: hederaProof.transactionId,

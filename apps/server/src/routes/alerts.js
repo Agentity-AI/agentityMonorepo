@@ -70,7 +70,7 @@ const { ValidationError, optionalEnum, requireUuid } = require("../utils/validat
  *                         example: "Task execution failed"
  *                       message:
  *                         type: string
- *                         example: "Hedera trust workflow execution failed for the selected task."
+ *                         example: "Trust Runtime execution failed for the selected task."
  *                       severity:
  *                         type: string
  *                         example: "critical"

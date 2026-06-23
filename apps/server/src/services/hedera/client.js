@@ -35,7 +35,7 @@ function getHederaClient({ required = false } = {}) {
 
   if (required && !isHederaOperatorConfigured()) {
     throw new Error(
-      "Missing Hedera operator credentials. Set HEDERA_OPERATOR_ACCOUNT_ID and HEDERA_OPERATOR_PRIVATE_KEY, HEDERA_OPERATOR_KEY, or HEDERA_OPERATOR_KEY_PATH.",
+      "Missing Trust Runtime operator credentials. Set HEDERA_OPERATOR_ACCOUNT_ID and HEDERA_OPERATOR_PRIVATE_KEY, HEDERA_OPERATOR_KEY, or HEDERA_OPERATOR_KEY_PATH.",
     );
   }
 
@@ -48,7 +48,7 @@ function getHederaOperatorCredentials({ required = false } = {}) {
 
   if (required && (!accountId || !privateKey)) {
     throw new Error(
-      "Missing Hedera operator credentials. Set HEDERA_OPERATOR_ACCOUNT_ID and HEDERA_OPERATOR_PRIVATE_KEY.",
+      "Missing Trust Runtime operator credentials. Set HEDERA_OPERATOR_ACCOUNT_ID and HEDERA_OPERATOR_PRIVATE_KEY.",
     );
   }
 

@@ -15,7 +15,7 @@ const { createTransactionRecord } = require("../services/transactions/transactio
  * @openapi
  * tags:
  *   - name: Execution
- *     description: Agent execution via sandbox, policy checks, and Hedera proof logging
+ *     description: Agent execution via sandbox, policy checks, and Trust Runtime proof logging
  */
 
 /**
@@ -24,7 +24,7 @@ const { createTransactionRecord } = require("../services/transactions/transactio
  *   post:
  *     tags: [Execution]
  *     summary: Execute a verified agent
- *     description: Runs sandbox simulation, executes the Agentity trust workflow, and writes a Hedera proof.
+ *     description: Runs sandbox simulation, executes the Agentity trust workflow, and writes a Trust Runtime proof.
  *     security:
  *       - bearerAuth: []
  *       - cookieAuth: []

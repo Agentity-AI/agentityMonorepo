@@ -271,7 +271,7 @@ async function getLatestAgentActivity(agentId) {
  *                 additionalProperties: true
  *                 example:
  *                   strategy: "swing"
- *                   network: "hedera-testnet"
+ *                   network: "mainnet"
  *                 description: Optional JSON field from the modal's Metadata input. Strings that contain valid JSON are also accepted by the backend.
  *               modelName:
  *                 type: string
@@ -314,7 +314,7 @@ async function getLatestAgentActivity(agentId) {
  *                 apiEndpoint: "https://agent.example.com/api/trading-bot"
  *                 metadata:
  *                   strategy: "swing"
- *                   network: "hedera-testnet"
+ *                   network: "mainnet"
  *             advancedPayload:
  *               summary: Optional advanced backend payload
  *               value:
@@ -616,7 +616,7 @@ router.get("/types", (req, res) => {
  *                             example: "verified"
  *                           explorerUrl:
  *                             type: string
- *                             example: "https://hashscan.io/testnet/transaction/..."
+ *                             example: "https://hashscan.io/mainnet/transaction/..."
  *                       lastActivityAt:
  *                         nullable: true
  *                         type: string
@@ -666,7 +666,7 @@ router.get("/my", requireAuth, async (req, res) => {
  *   get:
  *     tags: [Agents]
  *     summary: Get a single agent owned by the authenticated user
- *     description: Returns one normalized agent object including metadata, reputation, and Hedera proof details when available.
+ *     description: Returns one normalized agent object including metadata, reputation, and Trust Runtime proof details when available.
  *     security:
  *       - bearerAuth: []
  *       - cookieAuth: []
@@ -762,7 +762,7 @@ router.get("/my", requireAuth, async (req, res) => {
  *                       example: "verified"
  *                     explorerUrl:
  *                       type: string
- *                       example: "https://hashscan.io/testnet/transaction/..."
+ *                       example: "https://hashscan.io/mainnet/transaction/..."
  *                 lastActivityAt:
  *                   nullable: true
  *                   type: string
@@ -822,12 +822,12 @@ router.get("/:id", requireAuth, async (req, res) => {
  * /agents/{id}/verify:
  *   post:
  *     tags: [Agents]
- *     summary: Verify agent and optionally link Hedera wallet details
+ *     summary: Verify agent and optionally link trust account details
  *     description: |
  *       Verifies the agent locally first, calculates its trust score, and writes
- *       a Hedera proof memo transaction when an operator keypair is configured.
+ *       a Trust Runtime proof memo transaction when an operator keypair is configured.
  *
- *       Frontend can optionally send Hedera wallet details here instead of calling a separate wallet endpoint.
+ *       Frontend can optionally send trust account details here instead of calling a separate wallet endpoint.
  *     security:
  *       - bearerAuth: []
  *       - cookieAuth: []
@@ -853,7 +853,7 @@ router.get("/:id", requireAuth, async (req, res) => {
  *                 example: "302a300506032b6570032100..."
  *               network:
  *                 type: string
- *                 example: "testnet"
+ *                 example: "mainnet"
  *               kmsKeyId:
  *                 type: string
  *                 example: "demo-kms-key"
@@ -913,13 +913,13 @@ router.get("/:id", requireAuth, async (req, res) => {
  *                       example: 1
  *                     explorerUrl:
  *                       type: string
- *                       example: "https://hashscan.io/testnet/transaction/..."
+ *                       example: "https://hashscan.io/mainnet/transaction/..."
  *                     error:
  *                       type: string
- *                       example: "Agent verification succeeded locally, but Hedera proof sync failed."
+ *                       example: "Agent verification succeeded locally, but Trust Runtime proof sync failed."
  *                     note:
  *                       type: string
- *                       example: "Agent verification succeeded locally, but Hedera proof sync failed."
+ *                       example: "Agent verification succeeded locally, but Trust Runtime proof sync failed."
  *       401:
  *         description: Unauthorized
  *       400:
@@ -988,14 +988,14 @@ router.post("/:id/verify", requireAuth, async (req, res) => {
       hederaSyncStatus = "failed";
       hedera = {
         error: proofErr.message,
-        note: "Agent verification succeeded locally, but Hedera proof sync failed.",
+        note: "Agent verification succeeded locally, but Trust Runtime proof sync failed.",
       };
       await createAlert({
         userId: req.user.id,
         agentId: agent.id,
         sourceId: agent.id,
         sourceType: "agent",
-        title: "Hedera verification proof failed",
+        title: "Trust proof sync failed",
         severity: "high",
         type: "hedera_sync_failure",
         message: proofErr.message,
@@ -1032,10 +1032,10 @@ router.post("/:id/verify", requireAuth, async (req, res) => {
       type: "agent_verified",
       message:
         hederaSyncStatus === "synced"
-          ? `${agent.agent_name} was verified and synced to Hedera.`
+          ? `${agent.agent_name} was verified and synced to Trust Runtime.`
           : hederaSyncStatus === "simulated"
-            ? `${agent.agent_name} was verified with a simulated Hedera proof.`
-            : `${agent.agent_name} was verified locally, but Hedera sync needs attention.`,
+            ? `${agent.agent_name} was verified with a simulated trust proof.`
+            : `${agent.agent_name} was verified locally, but Trust Runtime sync needs attention.`,
       metadata: {
         hederaSyncStatus,
         hedera,
@@ -1068,8 +1068,8 @@ router.post("/:id/verify", requireAuth, async (req, res) => {
  * /agents/{id}/hedera-history:
  *   get:
  *     tags: [Agents]
- *     summary: Get Hedera proof history for an agent
- *     description: Returns normalized Hedera proof history for the authenticated user's agent.
+ *     summary: Get Trust Runtime proof history for an agent
+ *     description: Returns normalized Trust Runtime proof history for the authenticated user's agent.
  *     security:
  *       - bearerAuth: []
  *       - cookieAuth: []
@@ -1082,7 +1082,7 @@ router.post("/:id/verify", requireAuth, async (req, res) => {
  *         description: Agent UUID
  *     responses:
  *       200:
- *         description: Hedera proof history
+ *         description: Trust Runtime proof history
  *         content:
  *           application/json:
  *             schema:
@@ -1118,7 +1118,7 @@ router.post("/:id/verify", requireAuth, async (req, res) => {
  *       401:
  *         description: Unauthorized
  *       404:
- *         description: Agent not found or not yet registered on Hedera
+ *         description: Agent not found or not yet registered with Trust Runtime
  */
 router.get("/:id/hedera-history", requireAuth, async (req, res) => {
   try {
@@ -1140,7 +1140,7 @@ router.get("/:id/hedera-history", requireAuth, async (req, res) => {
     if (!registry) {
       return res.status(404).json({
         message:
-          "Agent does not have Hedera proofs yet. Call POST /agents/:id/verify first.",
+          "Agent does not have trust proofs yet. Call POST /agents/:id/verify first.",
       });
     }
 
