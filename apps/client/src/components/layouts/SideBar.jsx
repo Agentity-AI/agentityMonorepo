@@ -6,7 +6,7 @@ function Sidebar() {
   return (
     <div className="sticky top-0 flex h-screen w-60 flex-col bg-[#0f0f0f]">
       <Link to={"/"} >
-      <div className="h-16 flex items-center px-4 gap-2 border-b border-[#242323]">
+      <div className="flex min-h-[4.75rem] items-center gap-2 border-b border-[#242323] px-4">
         <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
           <span className="text-xl text-primary-content">
             <img src={logo} alt="ahentity logo"/>

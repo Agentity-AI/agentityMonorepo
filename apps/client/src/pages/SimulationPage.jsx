@@ -6,6 +6,7 @@ import SimulationCard from "../components/Card/SimulationCard.jsx";
 import { authentication } from "../store/zustant/useZustandHook.js";
 import SimulationTable from "../components/table/SimulationTable.jsx";
 import SimulationState from "../components/SimulationState/SimulationState.jsx";
+import PageHeader from "../components/layouts/PageHeader.jsx";
 
 function SimulationPage() {
   const [selectedAgentId, setSelectedAgentId] = useState("");
@@ -72,12 +73,10 @@ function SimulationPage() {
   );
   return (
     <AppLayout>
-      <div className="mb-6 rounded-lg p-4">
-        <h1 className="mb-1 text-3xl font-bold">Simulation Sandbox</h1>
-        <p className="text-sm text-white-400 text-base-content/60">
-          Test AI agents in containerized scenarios
-        </p>
-      </div>
+      <PageHeader
+        title="Simulation Sandbox"
+        description="Test AI agents in containerized scenarios"
+      />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         <div className="card border border-[#514c4c] bg-[#0f0f0f] rounded-lg py-4 px-4 xl:col-span-1">

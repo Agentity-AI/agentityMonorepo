@@ -11,11 +11,11 @@ function AppLayout({ children }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center border-b border-[#242323]">
+        <header className="sticky top-0 z-30 flex min-h-[4.75rem] items-center border-b border-[#242323]">
           <Topbar />
         </header>
 
-        <main className="flex-1 overflow-x-hidden overflow-y-auto px-3 py-4 pb-24 sm:px-4 sm:py-5 md:p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto px-4 pb-28 pt-8 sm:px-6 sm:pt-10 md:px-7 md:pb-8 lg:px-8">
           {children}
         </main>
       </div>

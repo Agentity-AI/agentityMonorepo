@@ -4,6 +4,7 @@ import AppLayout from "../layouts/AppLayouts";
 import TwoLineChart from "../components/chart/TwoLineChart";
 import { authentication } from "../store/zustant/useZustandHook";
 import TrustRuntimePanel from "../components/trust/TrustRuntimePanel";
+import PageHeader from "../components/layouts/PageHeader";
 
 function DashboardPage() {
   const { dashBoard, hederaStatus
@@ -34,13 +35,10 @@ const systemHealth = `${score.toFixed(1)}%`;
 
   return (
     <AppLayout>
-      {/* Header */}
-      <div id="dashboard" className="rounded-lg p-3 sm:p-4 md:-mt-5">
-        <h1 className="mb-1 text-2xl font-bold sm:text-3xl">Dashboard</h1>
-        <p className="text-sm text-base-content/60 text-gray-400">
-          System overview and activity monitoring
-        </p>
-      </div>
+      <PageHeader
+        title="Dashboard"
+        description="System overview and activity monitoring"
+      />
 
       {/* Top metrics (example wiring to real values) */}
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">

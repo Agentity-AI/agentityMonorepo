@@ -5,6 +5,7 @@ import { Bot, Plus } from 'lucide-react';
 import Modal from '../components/model/Modal';
 import NewAuditForm from '../components/popups/NewAuditForm';
 import AuditTable from '../components/table/AuditTable';
+import PageHeader from '../components/layouts/PageHeader';
 
 function SmartContract() {
     const [open, setOpen] = React.useState(false);
@@ -30,22 +31,19 @@ function SmartContract() {
 
   return (
     <AppLayout>
-  <div className="mb-6 flex flex-col gap-4 rounded-lg p-3 sm:flex-row sm:items-center sm:justify-between sm:p-4">
-        <div>
-          <h1 className="mb-1 text-2xl font-bold sm:text-3xl">Smart Contracts Audits</h1>
-          <p className="text-sm text-base-content/60 text-white">
-            Automated security analysis for smart contracts
-          </p>
-        </div>
-
-        <button
-          className="btn-sm flex w-full items-center justify-center rounded-lg border-none bg-[#06b0ff] px-4 py-2 text-white hover:bg-[#06b0ff]/90 sm:w-auto"
-          onClick={() => setOpen(true)}
-        >
-          <Plus className=" mr-2" size={30} />
-          <span>New Audit</span>
-        </button>
-      </div>
+      <PageHeader
+        title="Smart Contracts Audits"
+        description="Automated security analysis for smart contracts"
+        actions={
+          <button
+            className="btn-sm flex w-full items-center justify-center rounded-lg border-none bg-[#06b0ff] px-4 py-2 text-white hover:bg-[#06b0ff]/90 sm:w-auto"
+            onClick={() => setOpen(true)}
+          >
+            <Plus className="mr-2 h-5 w-5" />
+            <span>New Audit</span>
+          </button>
+        }
+      />
 
       <div className="border-[#514c4c] bg-[#0f0f0f] rounded-lg border">
         <div className="items-center gap-4 border-b border-[#514c4c] p-4">

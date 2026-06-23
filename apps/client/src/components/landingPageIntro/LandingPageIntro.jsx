@@ -4,14 +4,14 @@ import SignUp from "../signUp/SignUp"
 import Login from "../login/Login"
 function LandingPageIntro() {
   return (
-    <div className='mt-24 px-4 text-white'>
-        <div className='mx-auto mt-5 flex w-fit max-w-full items-center justify-center gap-2 rounded-full border border-[#14f195]/30 bg-[#06140f] px-4 py-2 text-center text-sm text-[#14f195] shadow-lg sm:text-base'>
+    <div className='px-4 pb-16 pt-32 text-white sm:pt-36'>
+        <div className='mx-auto flex w-fit max-w-full items-center justify-center gap-2 rounded-full border border-[#14f195]/30 bg-[#06140f] px-4 py-2 text-center text-sm text-[#14f195] shadow-lg sm:text-base'>
           <span className='h-2.5 w-2.5 rounded-full bg-[#14f195]' />
           <p>Live trust proofs for autonomous AI agents</p>
         </div>
-    <div className='mt-10 px-4'>
-    <h1 className='mt-9 text-center text-3xl font-bold sm:text-4xl'>Secure AI Agent Infrastructure</h1>
-    <p className='mx-auto mt-4 max-w-4xl text-center text-base text-[#c1c1c1] sm:text-lg'>Verify, simulate, pay, execute, and audit AI agents with tamper-evident proof trails before they touch production workflows.</p>
+    <div className='mx-auto mt-10 max-w-5xl px-2 sm:px-4'>
+    <h1 className='text-center text-3xl font-bold leading-tight sm:text-4xl'>Secure AI Agent Infrastructure</h1>
+    <p className='mx-auto mt-5 max-w-4xl text-center text-base leading-7 text-[#c1c1c1] sm:text-lg'>Verify, simulate, pay, execute, and audit AI agents with tamper-evident proof trails before they touch production workflows.</p>
 </div>
 <div className='mt-10 flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center'>
     <SignUp/>

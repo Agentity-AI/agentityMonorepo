@@ -7,6 +7,7 @@ import NewAgentPopUp from "../components/popups/NewAgentPopUp";
 import { useState } from "react";
 import { authentication } from "../store/zustant/useZustandHook";
 import ProgressBar from "../components/progessiveBar/ProgressiveBar";
+import PageHeader from "../components/layouts/PageHeader";
 
 function AiAgent() {
   const [open, setOpen] = useState(false);
@@ -22,22 +23,19 @@ function AiAgent() {
 
   return (
     <AppLayout>
-      <div className="mb-6 flex flex-col gap-4 rounded-lg p-3 sm:flex-row sm:items-center sm:justify-between sm:p-4">
-        <div>
-          <h1 className="mb-1 text-2xl font-bold sm:text-3xl">AI Agent</h1>
-          <p className="text-sm text-base-content/60 text-gray-400">
-            Register and manage AI agents
-          </p>
-        </div>
-
-        <button
-          className="btn-sm flex w-full items-center justify-center rounded-lg border-none bg-[#06b0ff] px-4 py-2 text-white hover:bg-[#06b0ff]/90 sm:w-auto"
-          onClick={() => setOpen(true)}
-        >
-          <Plus className=" mr-2" size={30} />
-          <span>Create New Agent</span>
-        </button>
-      </div>
+      <PageHeader
+        title="AI Agent"
+        description="Register and manage AI agents"
+        actions={
+          <button
+            className="btn-sm flex w-full items-center justify-center rounded-lg border-none bg-[#06b0ff] px-4 py-2 text-white hover:bg-[#06b0ff]/90 sm:w-auto"
+            onClick={() => setOpen(true)}
+          >
+            <Plus className="mr-2 h-5 w-5" />
+            <span>Create New Agent</span>
+          </button>
+        }
+      />
 
       <div className="border-[#514c4c] bg-[#0f0f0f] rounded-lg border">
         <div className="items-center gap-4 border-b border-[#514c4c] p-4">

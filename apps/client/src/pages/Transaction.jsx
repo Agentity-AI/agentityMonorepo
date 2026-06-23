@@ -7,6 +7,7 @@ import formatDate from "../helper/formatDate";
 import TransactionTable from "../components/table/TransactionTable";
 import PolicyCard from "../components/Card/PolicyCard";
 import SideIcon from "../components/layouts/SideIcon";
+import PageHeader from "../components/layouts/PageHeader";
 
 function shortValue(value) {
   return value ? `${String(value).slice(0, 8)}...${String(value).slice(-4)}` : "N/A";
@@ -31,17 +32,11 @@ function Transaction() {
 
   return (
     <AppLayout>
-      <div className="mb-6 flex flex-col rounded-lg p-3 sm:p-4">
-        {/* Header */}
-        <div className="mb-4">
-          <h1 className="mb-1 text-2xl font-bold text-white sm:text-3xl">
-            Payments & Transactions
-          </h1>
-          <p className="text-sm text-gray-400">
-            Manage AI agent payments, proofs, and execution records.
-          </p>
-        </div>
-
+      <div className="flex flex-col">
+        <PageHeader
+          title="Payments & Transactions"
+          description="Manage AI agent payments, proofs, and execution records."
+        />
         {/* Policies bar + cards */}
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {/* Policies header / New button */}

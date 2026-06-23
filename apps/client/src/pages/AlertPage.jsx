@@ -4,6 +4,7 @@ import { authentication } from '../store/zustant/useZustandHook';
 import AlertCard from '../components/Card/AlertCard';
 import formatDate from '../helper/formatDate';
 import { useEffect } from 'react';
+import PageHeader from '../components/layouts/PageHeader';
 
 
 function AlertPage() {
@@ -20,17 +21,11 @@ function AlertPage() {
    }, [getAlert,getAlertSummary]);
   return (
     <AppLayout>
-       <div className="mb-6 flex flex-col rounded-lg p-3 sm:p-4">
-        {/* Header */}
-        <div className="mb-4">
-          <h1 className="mb-1 text-2xl font-bold text-white sm:text-3xl">
-            Alerts & Monitoring
-          </h1>
-          <p className="text-sm text-gray-400">
-           Real-time security alerts and system notifications
-          </p>
-        </div>
-
+       <div className="flex flex-col">
+        <PageHeader
+          title="Alerts & Monitoring"
+          description="Real-time security alerts and system notifications"
+        />
         {/* Policies bar + cards */}
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
     
