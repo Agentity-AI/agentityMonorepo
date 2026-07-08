@@ -1,15 +1,32 @@
 require("dotenv").config();
 
+const {
+  getConsensusTopicIdString,
+  getHederaNetwork,
+  getNetworkEnvPrefix,
+  hasOperatorSigner,
+} = require("../src/config/hedera");
+
 const BASE_URL = process.env.SMOKE_BASE_URL || "http://localhost:5000";
-const HEDERA_OPERATOR_CONFIGURED = Boolean(
-  process.env.HEDERA_OPERATOR_ACCOUNT_ID &&
-    (process.env.HEDERA_OPERATOR_PRIVATE_KEY ||
-      process.env.HEDERA_OPERATOR_KEY ||
-      process.env.HEDERA_OPERATOR_KEY_PATH),
-);
 const REAL_PROOFS_ENABLED = process.env.HEDERA_ENABLE_REAL_PROOFS !== "false";
 const REAL_TRANSFERS_ENABLED = process.env.HEDERA_ENABLE_REAL_TRANSFERS === "true";
 const SMOKE_ACCOUNT_CONFIGURED = Boolean(process.env.SMOKE_HEDERA_ACCOUNT_ID);
+
+function safelyReadConfig(reader, fallback) {
+  try {
+    return reader();
+  } catch {
+    return fallback;
+  }
+}
+
+const HEDERA_NETWORK = safelyReadConfig(getHederaNetwork, "mainnet");
+const HEDERA_ENV_PREFIX = safelyReadConfig(getNetworkEnvPrefix, "HEDERA_MAINNET");
+const HEDERA_OPERATOR_CONFIGURED = safelyReadConfig(hasOperatorSigner, false);
+const HEDERA_TOPIC_CONFIGURED = safelyReadConfig(
+  () => Boolean(getConsensusTopicIdString()),
+  false,
+);
 
 function createRunner() {
   let authToken = null;
@@ -110,10 +127,12 @@ async function main() {
     JSON.stringify(
       {
         baseUrl: BASE_URL,
-        hederaNetwork: process.env.HEDERA_NETWORK || "mainnet",
+        hederaNetwork: HEDERA_NETWORK,
+        hederaEnvPrefix: HEDERA_ENV_PREFIX,
         realProofsEnabled: REAL_PROOFS_ENABLED,
         realTransfersEnabled: REAL_TRANSFERS_ENABLED,
         hederaOperatorConfigured: HEDERA_OPERATOR_CONFIGURED,
+        hederaTopicConfigured: HEDERA_TOPIC_CONFIGURED,
         smokeAccountConfigured: SMOKE_ACCOUNT_CONFIGURED,
         kmsConfigured: Boolean(process.env.AWS_REGION && process.env.AWS_KMS_KEY_ID),
       },
@@ -173,7 +192,7 @@ async function main() {
     description: "Automated backend smoke test agent",
     agentType: "workflow-test-agent",
     metadata: {
-      network: process.env.HEDERA_NETWORK || "testnet",
+      network: HEDERA_NETWORK,
       trustLayer: "hedera",
     },
   });
@@ -219,7 +238,7 @@ async function main() {
     inputPayload: {
       target: "settle-agent-workflow",
       amount: 1,
-      network: process.env.HEDERA_NETWORK || "testnet",
+      network: HEDERA_NETWORK,
       settlementAsset: "HBAR",
     },
   });
@@ -276,11 +295,11 @@ async function main() {
 
   if (!REAL_PROOFS_ENABLED) {
     console.log(
-      "\n[SMOKE] Mainnet simulated mode is active: app workflows are tested against mainnet configuration, while Trust Runtime proofs and payments remain local/simulated.",
+      `\n[SMOKE] ${HEDERA_NETWORK} simulated proof mode is active: app workflows are tested against ${HEDERA_NETWORK} configuration, while Trust Runtime proofs remain local/simulated.`,
     );
-  } else if (!HEDERA_OPERATOR_CONFIGURED) {
+  } else if (!HEDERA_OPERATOR_CONFIGURED || !HEDERA_TOPIC_CONFIGURED) {
     console.log(
-      "\n[SMOKE] Live Hedera proofs require HEDERA_OPERATOR_ACCOUNT_ID, HEDERA_OPERATOR_PRIVATE_KEY, and HEDERA_CONSENSUS_TOPIC_ID. Real payments additionally require HEDERA_ENABLE_REAL_TRANSFERS=true and a funded operator account.",
+      `\n[SMOKE] Live Hedera proofs require ${HEDERA_ENV_PREFIX}_OPERATOR_ACCOUNT_ID, ${HEDERA_ENV_PREFIX}_OPERATOR_PRIVATE_KEY, and ${HEDERA_ENV_PREFIX}_CONSENSUS_TOPIC_ID. Real payments additionally require HEDERA_ENABLE_REAL_TRANSFERS=true and a funded operator account.`,
     );
   }
 }

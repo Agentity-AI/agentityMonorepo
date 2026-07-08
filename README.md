@@ -91,15 +91,31 @@ CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 Hedera values:
 
 ```bash
-HEDERA_NETWORK=mainnet
-HEDERA_MIRROR_NODE_URL=https://mainnet-public.mirrornode.hedera.com
+HEDERA_NETWORK=testnet
+HEDERA_ENABLE_REAL_PROOFS=false
+HEDERA_ENABLE_REAL_TRANSFERS=false
+
+# Optional generic fallback values.
+HEDERA_MIRROR_NODE_URL=
 HEDERA_OPERATOR_ACCOUNT_ID=
 HEDERA_OPERATOR_PRIVATE_KEY=
 HEDERA_OPERATOR_KEY_PATH=
 HEDERA_CONSENSUS_TOPIC_ID=
 HEDERA_DEFAULT_TOKEN_ID=
-HEDERA_ENABLE_REAL_PROOFS=false
-HEDERA_ENABLE_REAL_TRANSFERS=false
+
+# Used when HEDERA_NETWORK=testnet.
+HEDERA_TESTNET_MIRROR_NODE_URL=https://testnet.mirrornode.hedera.com
+HEDERA_TESTNET_OPERATOR_ACCOUNT_ID=
+HEDERA_TESTNET_OPERATOR_PRIVATE_KEY=
+HEDERA_TESTNET_OPERATOR_KEY_PATH=
+HEDERA_TESTNET_CONSENSUS_TOPIC_ID=
+
+# Used when HEDERA_NETWORK=mainnet.
+HEDERA_MAINNET_MIRROR_NODE_URL=https://mainnet-public.mirrornode.hedera.com
+HEDERA_MAINNET_OPERATOR_ACCOUNT_ID=
+HEDERA_MAINNET_OPERATOR_PRIVATE_KEY=
+HEDERA_MAINNET_OPERATOR_KEY_PATH=
+HEDERA_MAINNET_CONSENSUS_TOPIC_ID=
 ```
 
 Pricing values:
@@ -242,45 +258,57 @@ See [TESTING_GUIDE.md](docs/TESTING_GUIDE.md) for real-life testing scenarios su
 
 If operator credentials or an HCS topic are not configured, the backend still completes local flows using simulated Hedera proof records. This keeps demos, development, and automated testing safe.
 
-Mainnet demo mode, recommended until a backend operator key is available:
+The backend supports separate network profiles. It reads profile-specific values first, based on `HEDERA_NETWORK`, and falls back to the generic `HEDERA_*` variables only when that profile group is empty. This lets the team keep both networks configured without overwriting secrets or mixing mainnet and testnet operator values.
+
+Testnet QA mode, recommended for day-to-day testing:
 
 ```bash
-HEDERA_NETWORK=mainnet
-HEDERA_MIRROR_NODE_URL=https://mainnet-public.mirrornode.hedera.com
-HEDERA_OPERATOR_ACCOUNT_ID=
-HEDERA_OPERATOR_PRIVATE_KEY=
-HEDERA_OPERATOR_KEY_PATH=
-HEDERA_CONSENSUS_TOPIC_ID=
-HEDERA_DEFAULT_TOKEN_ID=
+HEDERA_NETWORK=testnet
+HEDERA_TESTNET_OPERATOR_ACCOUNT_ID=0.0.x
+HEDERA_TESTNET_OPERATOR_PRIVATE_KEY=...
+HEDERA_TESTNET_CONSENSUS_TOPIC_ID=0.0.y
 HEDERA_ENABLE_REAL_PROOFS=false
 HEDERA_ENABLE_REAL_TRANSFERS=false
 ```
 
-In this mode, `/hedera/status` should show `network: "mainnet"`, `status: "ready"`, `realProofsEnabled: false`, `realPaymentsEnabled: false`, `operatorConfigured: false`, `proofMode: "local-hash"`, and an empty `configErrors` array. The backend smoke flow should pass with simulated proof, payment, and KMS outputs. This is the safest investor-demo posture because the product workflows are testable without exposing a server private key or moving funds.
+In this mode, `/hedera/status` should show `network: "testnet"` and `envPrefix: "HEDERA_TESTNET"`. With `HEDERA_ENABLE_REAL_PROOFS=false`, workflows still run with simulated proof writes even if credentials are present.
 
-Live proofs require:
+Live testnet proofs require:
 
 ```bash
-HEDERA_OPERATOR_ACCOUNT_ID=0.0.x
-HEDERA_OPERATOR_PRIVATE_KEY=...
-HEDERA_CONSENSUS_TOPIC_ID=0.0.y
+HEDERA_NETWORK=testnet
+HEDERA_TESTNET_OPERATOR_ACCOUNT_ID=0.0.x
+HEDERA_TESTNET_OPERATOR_PRIVATE_KEY=...
+HEDERA_TESTNET_CONSENSUS_TOPIC_ID=0.0.y
 HEDERA_ENABLE_REAL_PROOFS=true
+HEDERA_ENABLE_REAL_TRANSFERS=false
+```
+
+Mainnet readiness mode, safe while the team is still preparing:
+
+```bash
+HEDERA_NETWORK=mainnet
+HEDERA_MAINNET_OPERATOR_ACCOUNT_ID=
+HEDERA_MAINNET_OPERATOR_KEY_PATH=
+HEDERA_MAINNET_CONSENSUS_TOPIC_ID=
+HEDERA_MAINNET_DEFAULT_TOKEN_ID=
+HEDERA_ENABLE_REAL_PROOFS=false
+HEDERA_ENABLE_REAL_TRANSFERS=false
 ```
 
 Recommended production setup:
 
 ```bash
 HEDERA_NETWORK=mainnet
-HEDERA_MIRROR_NODE_URL=https://mainnet-public.mirrornode.hedera.com
-HEDERA_OPERATOR_ACCOUNT_ID=0.0.x
-HEDERA_OPERATOR_KEY_PATH=/run/secrets/hedera-operator-key
-HEDERA_CONSENSUS_TOPIC_ID=0.0.y
-HEDERA_DEFAULT_TOKEN_ID=
+HEDERA_MAINNET_OPERATOR_ACCOUNT_ID=0.0.x
+HEDERA_MAINNET_OPERATOR_KEY_PATH=/run/secrets/hedera-mainnet-operator-key
+HEDERA_MAINNET_CONSENSUS_TOPIC_ID=0.0.y
+HEDERA_MAINNET_DEFAULT_TOKEN_ID=
 HEDERA_ENABLE_REAL_PROOFS=true
 HEDERA_ENABLE_REAL_TRANSFERS=false
 ```
 
-Use `HEDERA_OPERATOR_PRIVATE_KEY` only when your deployment platform stores it as a protected secret. If the platform supports secret files, prefer `HEDERA_OPERATOR_KEY_PATH`. `HEDERA_DEFAULT_TOKEN_ID` can stay blank for HBAR-only flows; set it only when enabling an HTS token.
+Use `HEDERA_MAINNET_OPERATOR_PRIVATE_KEY` only when your deployment platform stores it as a protected secret. If the platform supports secret files, prefer `HEDERA_MAINNET_OPERATOR_KEY_PATH`. `HEDERA_MAINNET_DEFAULT_TOKEN_ID` can stay blank for HBAR-only flows; set it only when enabling an HTS token.
 
 Live transfers additionally require:
 
@@ -290,7 +318,7 @@ HEDERA_ENABLE_REAL_TRANSFERS=true
 
 Keep real transfers disabled until the operator account, limits, policies, and mainnet funding are reviewed.
 
-After setting either mainnet demo values or live mainnet values:
+After setting either testnet or mainnet values:
 
 ```bash
 npm run db:migrate:hedera
@@ -299,9 +327,23 @@ curl http://localhost:5000/hedera/status
 npm run smoke
 ```
 
-For mainnet demo mode, `/hedera/status` should show `network: "mainnet"`, `status: "ready"`, `realProofsEnabled: false`, `operatorConfigured: false`, and `proofMode: "local-hash"`. The smoke output should report simulated proof/payment behavior and complete successfully.
+Use these wrappers when you want to smoke a specific profile without editing `.env`:
 
-For live proof mode, `/hedera/status` should show `network: "mainnet"`, `operatorConfigured: true`, `operatorCanSubmit: true`, `proofMode: "hcs-topic"`, and your `consensusTopicId`. The smoke output should stop reporting simulated proof sync once operator credentials and topic ID are valid.
+```bash
+npm run smoke:testnet
+npm run smoke:mainnet
+```
+
+Create HCS topics per profile:
+
+```bash
+npm run hedera:create-topic:testnet
+npm run hedera:create-topic:mainnet
+```
+
+For simulated mode, `/hedera/status` should show the selected `network`, `status: "ready"`, `realProofsEnabled: false`, and `proofMode: "hcs-topic"` if a topic is configured or `"local-hash"` if not. The smoke output should report simulated proof/payment behavior and complete successfully.
+
+For live proof mode, `/hedera/status` should show the selected `network`, `operatorConfigured: true`, `operatorCanSubmit: true`, `proofMode: "hcs-topic"`, and your `consensusTopicId`. The smoke output should stop reporting simulated proof sync once operator credentials and topic ID are valid.
 
 ## Security Notes
 

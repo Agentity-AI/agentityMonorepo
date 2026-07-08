@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { buildHederaRuntimeStatus } = require("../services/hedera/client");
+const { getHederaNetwork } = require("../config/hedera");
 
 /**
  * @openapi
@@ -53,7 +54,7 @@ router.get("/status", async (req, res) => {
     databaseCheckedAt: databaseStatus.checkedAt,
     databaseSyncStatus: databaseStatus.syncStatus,
     hedera: buildHederaRuntimeStatus(),
-    network: process.env.HEDERA_NETWORK || "mainnet",
+    network: getHederaNetwork(),
   });
 });
 

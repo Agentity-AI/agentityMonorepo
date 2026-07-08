@@ -14,16 +14,72 @@ const SUPPORTED_NETWORKS = new Set([
   "localnet",
 ]);
 
+const OPERATOR_ENV_NAMES = [
+  "OPERATOR_ACCOUNT_ID",
+  "OPERATOR_PRIVATE_KEY",
+  "OPERATOR_KEY",
+  "OPERATOR_KEY_PATH",
+  "OPERATOR_PRIVATE_KEY_PATH",
+];
+const TOPIC_ENV_NAMES = [
+  "CONSENSUS_TOPIC_ID",
+  "TOPIC_ID",
+  "REGISTRY_TOPIC_ID",
+];
+const TOKEN_ENV_NAMES = ["DEFAULT_TOKEN_ID"];
+const MIRROR_ENV_NAMES = ["MIRROR_NODE_URL"];
+
 let cachedOperatorKey = undefined;
 
 function getHederaNetwork() {
-  const network = process.env.HEDERA_NETWORK || process.env.HEDERA_CLUSTER || "mainnet";
+  const network = String(
+    process.env.HEDERA_NETWORK || process.env.HEDERA_CLUSTER || "mainnet",
+  )
+    .trim()
+    .toLowerCase();
+
   return SUPPORTED_NETWORKS.has(network) ? network : "mainnet";
 }
 
+function getNetworkEnvPrefix() {
+  return `HEDERA_${getHederaNetwork().toUpperCase()}`;
+}
+
+function hasNetworkSpecificEnv(names) {
+  const normalizedNames = Array.isArray(names) ? names : [names];
+  return normalizedNames.some((name) => {
+    const value = process.env[`${getNetworkEnvPrefix()}_${name}`];
+    return value != null && String(value).trim() !== "";
+  });
+}
+
+function resolveHederaEnv(names, { allowGenericFallback = true } = {}) {
+  const normalizedNames = Array.isArray(names) ? names : [names];
+  const prefixedNames = normalizedNames.map(
+    (name) => `${getNetworkEnvPrefix()}_${name}`,
+  );
+  const genericNames = normalizedNames.map((name) => `HEDERA_${name}`);
+
+  const candidateNames = allowGenericFallback
+    ? [...prefixedNames, ...genericNames]
+    : prefixedNames;
+
+  for (const key of candidateNames) {
+    const value = process.env[key];
+    if (value != null && String(value).trim() !== "") {
+      return { key, value };
+    }
+  }
+
+  return { key: genericNames[0], value: null };
+}
+
 function getHederaMirrorNodeUrl() {
-  if (process.env.HEDERA_MIRROR_NODE_URL) {
-    return process.env.HEDERA_MIRROR_NODE_URL;
+  const configured = resolveHederaEnv("MIRROR_NODE_URL", {
+    allowGenericFallback: !hasNetworkSpecificEnv(MIRROR_ENV_NAMES),
+  });
+  if (configured.value) {
+    return configured.value;
   }
 
   const network = getHederaNetwork();
@@ -53,11 +109,14 @@ function getHederaExplorerUrl(value, type = "transaction") {
 }
 
 function resolvePrivateKeyPath() {
-  const configuredPath =
-    process.env.HEDERA_OPERATOR_KEY_PATH ||
-    process.env.HEDERA_OPERATOR_PRIVATE_KEY_PATH;
+  const configuredPath = resolveHederaEnv(
+    ["OPERATOR_KEY_PATH", "OPERATOR_PRIVATE_KEY_PATH"],
+    {
+      allowGenericFallback: !hasNetworkSpecificEnv(OPERATOR_ENV_NAMES),
+    },
+  );
 
-  return configuredPath ? path.resolve(configuredPath) : null;
+  return configuredPath.value ? path.resolve(configuredPath.value) : null;
 }
 
 function readPrivateKeyPath() {
@@ -103,10 +162,13 @@ function loadOperatorPrivateKey() {
     return cachedOperatorKey;
   }
 
-  const keySource =
-    process.env.HEDERA_OPERATOR_PRIVATE_KEY ||
-    process.env.HEDERA_OPERATOR_KEY ||
-    readPrivateKeyPath();
+  const rawKeySource = resolveHederaEnv(
+    ["OPERATOR_PRIVATE_KEY", "OPERATOR_KEY"],
+    {
+      allowGenericFallback: !hasNetworkSpecificEnv(OPERATOR_ENV_NAMES),
+    },
+  );
+  const keySource = rawKeySource.value || readPrivateKeyPath();
 
   if (!keySource) {
     cachedOperatorKey = null;
@@ -118,13 +180,16 @@ function loadOperatorPrivateKey() {
 }
 
 function getOperatorAccountId() {
-  const accountId = process.env.HEDERA_OPERATOR_ACCOUNT_ID;
+  const account = resolveHederaEnv("OPERATOR_ACCOUNT_ID", {
+    allowGenericFallback: !hasNetworkSpecificEnv(OPERATOR_ENV_NAMES),
+  });
+  const accountId = account.value;
   if (!accountId) return null;
 
   try {
     return AccountId.fromString(accountId);
   } catch (error) {
-    throw new Error(`Invalid HEDERA_OPERATOR_ACCOUNT_ID: ${error.message}`);
+    throw new Error(`Invalid ${account.key}: ${error.message}`);
   }
 }
 
@@ -138,17 +203,20 @@ function hasOperatorSigner() {
 }
 
 function getConsensusTopicId() {
-  const value =
-    process.env.HEDERA_CONSENSUS_TOPIC_ID ||
-    process.env.HEDERA_TOPIC_ID ||
-    process.env.HEDERA_REGISTRY_TOPIC_ID;
+  const topic = resolveHederaEnv(
+    ["CONSENSUS_TOPIC_ID", "TOPIC_ID", "REGISTRY_TOPIC_ID"],
+    {
+      allowGenericFallback: !hasNetworkSpecificEnv(TOPIC_ENV_NAMES),
+    },
+  );
+  const value = topic.value;
 
   if (!value) return null;
 
   try {
     return TopicId.fromString(value);
   } catch (error) {
-    throw new Error(`Invalid HEDERA_CONSENSUS_TOPIC_ID: ${error.message}`);
+    throw new Error(`Invalid ${topic.key}: ${error.message}`);
   }
 }
 
@@ -158,13 +226,16 @@ function getConsensusTopicIdString() {
 }
 
 function getDefaultTokenId() {
-  const value = process.env.HEDERA_DEFAULT_TOKEN_ID;
+  const token = resolveHederaEnv("DEFAULT_TOKEN_ID", {
+    allowGenericFallback: !hasNetworkSpecificEnv(TOKEN_ENV_NAMES),
+  });
+  const value = token.value;
   if (!value) return null;
 
   try {
     return TokenId.fromString(value).toString();
   } catch (error) {
-    throw new Error(`Invalid HEDERA_DEFAULT_TOKEN_ID: ${error.message}`);
+    throw new Error(`Invalid ${token.key}: ${error.message}`);
   }
 }
 
@@ -172,6 +243,7 @@ module.exports = {
   getConsensusTopicId,
   getConsensusTopicIdString,
   getDefaultTokenId,
+  getNetworkEnvPrefix,
   getHederaExplorerUrl,
   getHederaMirrorNodeUrl,
   getHederaNetwork,

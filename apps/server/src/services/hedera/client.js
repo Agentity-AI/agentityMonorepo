@@ -5,6 +5,7 @@ const {
   getHederaExplorerUrl,
   getHederaMirrorNodeUrl,
   getHederaNetwork,
+  getNetworkEnvPrefix,
   getOperatorAccountId,
   getOperatorAccountIdString,
   hasOperatorSigner,
@@ -34,8 +35,9 @@ function getHederaClient({ required = false } = {}) {
   }
 
   if (required && !isHederaOperatorConfigured()) {
+    const envPrefix = getNetworkEnvPrefix();
     throw new Error(
-      "Missing Trust Runtime operator credentials. Set HEDERA_OPERATOR_ACCOUNT_ID and HEDERA_OPERATOR_PRIVATE_KEY, HEDERA_OPERATOR_KEY, or HEDERA_OPERATOR_KEY_PATH.",
+      `Missing Trust Runtime operator credentials. Set ${envPrefix}_OPERATOR_ACCOUNT_ID and ${envPrefix}_OPERATOR_PRIVATE_KEY, or use the generic HEDERA_OPERATOR_ACCOUNT_ID and HEDERA_OPERATOR_PRIVATE_KEY fallback.`,
     );
   }
 
@@ -47,8 +49,9 @@ function getHederaOperatorCredentials({ required = false } = {}) {
   const privateKey = loadOperatorPrivateKey();
 
   if (required && (!accountId || !privateKey)) {
+    const envPrefix = getNetworkEnvPrefix();
     throw new Error(
-      "Missing Trust Runtime operator credentials. Set HEDERA_OPERATOR_ACCOUNT_ID and HEDERA_OPERATOR_PRIVATE_KEY.",
+      `Missing Trust Runtime operator credentials. Set ${envPrefix}_OPERATOR_ACCOUNT_ID and ${envPrefix}_OPERATOR_PRIVATE_KEY, or use the generic HEDERA_OPERATOR_ACCOUNT_ID and HEDERA_OPERATOR_PRIVATE_KEY fallback.`,
     );
   }
 
@@ -113,6 +116,7 @@ function buildHederaRuntimeStatus() {
   return {
     status: configErrors.length > 0 ? "degraded" : "ready",
     network,
+    envPrefix: getNetworkEnvPrefix(),
     mirrorNodeUrl,
     operatorAccountId,
     operatorConfigured: operatorCanSubmit,

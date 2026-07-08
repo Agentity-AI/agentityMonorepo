@@ -2,7 +2,7 @@
 
 This guide is written for the live deployed app and API. It tests the Hedera integration end to end: runtime status, agent identity, wallet linking, HCS proof creation, proof history, simulations, alerts, HBAR/HTS payments, execution proofs, transaction records, mirror-node inspection, and partner API-key flows.
 
-Use simulated mode for normal QA. Use live Hedera testnet only after the simulated flow passes.
+Use simulated mode for normal QA. Use live Hedera testnet only after the simulated flow passes. Keep mainnet configured separately so the team can run readiness checks without replacing testnet values.
 
 ## Live Deployment Quick Start
 
@@ -32,12 +32,17 @@ Live deployment notes:
 
 ## 1. Test Modes
 
+The backend reads profile-specific values first, based on `HEDERA_NETWORK`, and falls back to generic `HEDERA_*` values only when that profile group is empty. This prevents a testnet account from accidentally borrowing a generic mainnet private key or topic.
+
 ### Mode A: Safe QA, no real Hedera spend
 
 Use this for frontend testing, demos, and regression checks.
 
 ```bash
 HEDERA_NETWORK=testnet
+HEDERA_TESTNET_OPERATOR_ACCOUNT_ID=
+HEDERA_TESTNET_OPERATOR_PRIVATE_KEY=
+HEDERA_TESTNET_CONSENSUS_TOPIC_ID=
 HEDERA_ENABLE_REAL_PROOFS=false
 HEDERA_ENABLE_REAL_TRANSFERS=false
 ```
@@ -56,11 +61,11 @@ Use this after Mode A passes.
 
 ```bash
 HEDERA_NETWORK=testnet
+HEDERA_TESTNET_OPERATOR_ACCOUNT_ID=0.0.x
+HEDERA_TESTNET_OPERATOR_PRIVATE_KEY=...
+HEDERA_TESTNET_CONSENSUS_TOPIC_ID=0.0.y
 HEDERA_ENABLE_REAL_PROOFS=true
 HEDERA_ENABLE_REAL_TRANSFERS=false
-HEDERA_OPERATOR_ACCOUNT_ID=0.0.x
-HEDERA_OPERATOR_PRIVATE_KEY=...
-HEDERA_CONSENSUS_TOPIC_ID=0.0.y
 ```
 
 Expected behavior:
@@ -82,6 +87,25 @@ Expected behavior:
 - `/tasks/:id/pay` performs a real transfer from the operator account to the linked agent wallet.
 - HBAR payments use native tinybar transfers.
 - HTS payments require `tokenId`, token association, and enough operator balance.
+
+### Mode D: Mainnet readiness, no real Hedera spend
+
+Use this to confirm the API, database, and frontend can run with mainnet selected while proofs and transfers stay simulated.
+
+```bash
+HEDERA_NETWORK=mainnet
+HEDERA_MAINNET_OPERATOR_ACCOUNT_ID=
+HEDERA_MAINNET_OPERATOR_PRIVATE_KEY=
+HEDERA_MAINNET_CONSENSUS_TOPIC_ID=
+HEDERA_ENABLE_REAL_PROOFS=false
+HEDERA_ENABLE_REAL_TRANSFERS=false
+```
+
+Expected behavior:
+
+- `/hedera/status` reports `network: "mainnet"` and `envPrefix: "HEDERA_MAINNET"`.
+- Proof and payment writes remain simulated.
+- No mainnet HBAR is moved.
 
 ## 2. Preflight Checklist
 
@@ -667,6 +691,20 @@ Run the smoke test against local or deployed API:
 
 ```bash
 SMOKE_BASE_URL=https://agentitymonorepo.onrender.com npm run smoke
+```
+
+Run smoke against a specific profile without editing `.env`:
+
+```bash
+SMOKE_BASE_URL=https://agentitymonorepo.onrender.com npm run smoke:testnet
+SMOKE_BASE_URL=https://agentitymonorepo.onrender.com npm run smoke:mainnet
+```
+
+Create a profile-specific HCS topic:
+
+```bash
+npm run hedera:create-topic:testnet
+npm run hedera:create-topic:mainnet
 ```
 
 Optional smoke variables:

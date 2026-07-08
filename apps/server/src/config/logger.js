@@ -17,6 +17,14 @@ const SENSITIVE_KEYS = new Set([
   "HEDERA_OPERATOR_KEY",
 ]);
 
+function isSensitiveKey(key) {
+  if (SENSITIVE_KEYS.has(key)) return true;
+
+  return /^HEDERA_(MAINNET_|TESTNET_|PREVIEWNET_|LOCALNET_)?OPERATOR_(PRIVATE_)?KEY(_PATH)?$/.test(
+    key,
+  );
+}
+
 function redactValue(value) {
   if (Array.isArray(value)) {
     return value.map(redactValue);
@@ -24,7 +32,7 @@ function redactValue(value) {
 
   if (value && typeof value === "object") {
     for (const [key, innerValue] of Object.entries(value)) {
-      value[key] = SENSITIVE_KEYS.has(key) ? "[REDACTED]" : redactValue(innerValue);
+      value[key] = isSensitiveKey(key) ? "[REDACTED]" : redactValue(innerValue);
     }
 
     return value;

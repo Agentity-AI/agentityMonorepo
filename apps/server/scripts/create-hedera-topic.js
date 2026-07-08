@@ -6,13 +6,31 @@ const {
   getHederaClient,
   getHederaOperatorCredentials,
 } = require("../src/services/hedera/client");
-const { getHederaNetwork } = require("../src/config/hedera");
+const {
+  getHederaNetwork,
+  getNetworkEnvPrefix,
+} = require("../src/config/hedera");
 
 function describePrivateKeyShape() {
-  const raw =
-    process.env.HEDERA_OPERATOR_PRIVATE_KEY ||
-    process.env.HEDERA_OPERATOR_KEY ||
-    "";
+  const network = getHederaNetwork();
+  const envPrefix = `HEDERA_${network.toUpperCase()}`;
+  const profileOperatorKeys = [
+    `${envPrefix}_OPERATOR_ACCOUNT_ID`,
+    `${envPrefix}_OPERATOR_PRIVATE_KEY`,
+    `${envPrefix}_OPERATOR_KEY`,
+    `${envPrefix}_OPERATOR_KEY_PATH`,
+    `${envPrefix}_OPERATOR_PRIVATE_KEY_PATH`,
+  ];
+  const useProfileOnly = profileOperatorKeys.some(
+    (key) => process.env[key] != null && String(process.env[key]).trim() !== "",
+  );
+  const raw = useProfileOnly
+    ? process.env[`${envPrefix}_OPERATOR_PRIVATE_KEY`] ||
+      process.env[`${envPrefix}_OPERATOR_KEY`] ||
+      ""
+    : process.env.HEDERA_OPERATOR_PRIVATE_KEY ||
+      process.env.HEDERA_OPERATOR_KEY ||
+      "";
   const value = String(raw).trim();
 
   return {
@@ -28,6 +46,7 @@ function describePrivateKeyShape() {
 
 async function main() {
   const network = getHederaNetwork();
+  const envPrefix = getNetworkEnvPrefix();
 
   if (network !== "mainnet") {
     console.warn(`[HEDERA] Creating topic on ${network}, not mainnet.`);
@@ -41,7 +60,10 @@ async function main() {
     .execute(client);
 
   const receipt = await tx.getReceipt(client);
-  console.log(`HEDERA_CONSENSUS_TOPIC_ID=${receipt.topicId.toString()}`);
+  console.log(`${envPrefix}_CONSENSUS_TOPIC_ID=${receipt.topicId.toString()}`);
+  console.log(
+    `# Generic fallback: HEDERA_CONSENSUS_TOPIC_ID=${receipt.topicId.toString()}`,
+  );
 
   client.close();
 }
